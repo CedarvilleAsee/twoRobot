@@ -169,12 +169,7 @@ void stateMachine::earlyStates(Robot& theRobot){
       }
       break;
       
-    case 3: //FIND_LINE -> LINE_FOLLOW
-      if(theRobot.amountSeen > 1){
-        theRobot.oneTimer.set(400);
-        theRobot.currentState++;
-      }
-      break;
+    
 	}
 }	//end stateMachine::earlyStates
 
@@ -183,6 +178,13 @@ void stateMachine::earlyStates(Robot& theRobot){
 		void stateMachine::midStatesLeftBot(Robot& theRobot){
 			switch (theRobot.currentState) {
 				
+				case 3: //FIND_LINE -> LINE_FOLLOW
+					if(theRobot.amountSeen > 1){
+						theRobot.oneTimer.set(400);
+						theRobot.currentState++;
+					}
+					break;
+					
 				case 27: //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
 				case 4:  //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
 					if(theRobot.oneTimer.isTimeUpUnset()){

@@ -2,12 +2,12 @@
 #define CONSTANTS_H
 
 #ifndef R2_LEFT
-//#define R2_LEFT 3
+#define R2_LEFT 3
 #endif
 
 
 #ifndef D2_RIGHT
-#define D2_RIGHT 1
+//#define D2_RIGHT 1
 #endif
 
 	enum State {

@@ -19,14 +19,6 @@
 #define PINS_H
 
 
-#ifndef D2_RIGHT
-#define D2_RIGHT 1
-#endif
-
-#ifndef R2_LEFT
-//#define R2_LEFT 3
-#endif
-
 /******************************************\
 | Left Robot Pinouts                       |
 | R2 pinouts                               |

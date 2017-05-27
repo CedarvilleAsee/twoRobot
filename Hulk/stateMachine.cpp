@@ -168,8 +168,14 @@ void stateMachine::earlyStates(Robot& theRobot){
         theRobot.currentState++;
       }
       break;
+		
+		case 3: //FIND_LINE -> LINE_FOLLOW
+			if(theRobot.amountSeen > 1){
+				theRobot.oneTimer.set(400);
+				theRobot.currentState++;
+			}
+			break;
       
-    
 	}
 }	//end stateMachine::earlyStates
 
@@ -178,13 +184,6 @@ void stateMachine::earlyStates(Robot& theRobot){
 		void stateMachine::midStatesLeftBot(Robot& theRobot){
 			switch (theRobot.currentState) {
 				
-				case 3: //FIND_LINE -> LINE_FOLLOW
-					if(theRobot.amountSeen > 1){
-						theRobot.oneTimer.set(400);
-						theRobot.currentState++;
-					}
-					break;
-					
 				case 27: //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
 				case 4:  //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
 					if(theRobot.oneTimer.isTimeUpUnset()){
@@ -384,13 +383,30 @@ void stateMachine::earlyStates(Robot& theRobot){
 		
 		void midStatesRightBot(Robot& theRobot){
 			switch (theRobot.currentState) {
-	
-				case 4: //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
-								//this should be done with the inner wall sensor
-					theRobot.currentState++;
+
+				
+				//case 27: //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
+				case 4:  //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
+				
 					break;
+
+				case 5: //LINE_FOLLOW_OFFSET -> EJECT_BARREL
+				//case 16:
+					if(theRobot.wallSensorDistance < WALL_TRIGGER){
+						theRobot.currentState++;
+					}
+					break; 
+
+				case 17: // EJECT_BARREL -> GRAB_BARREL
+				case 6:
 				
-				
+					break;
+
+				case 7: // GRAB_BARREL -> LINE_FOLLOW_OFFSET
+
+					break;
+
+
 			}
 		} // end  midStatesRightBot
 		

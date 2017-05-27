@@ -2,12 +2,12 @@
 #define CONSTANTS_H
 
 #ifndef R2_LEFT
-#define R2_LEFT 3
+//#define R2_LEFT 3
 #endif
 
 
 #ifndef D2_RIGHT
-//#define D2_RIGHT 1
+#define D2_RIGHT 1
 #endif
 
 	enum State {
@@ -145,12 +145,12 @@
 		\******************************************/
 		const int EJECT_FRONT_POSITION  = 115;
 		const int EJECT_BACK_POSITION   = 95;
-		const int CLAW_OPEN 						= 55;
-		const int CLAW_CLOSED 					= 85;  
-		const int ARM_DOWN 							= 10;  
-		const int ARM_UP 								= 140;  
-		const int DUMP_UP 							= 100;
-		const int DUMP_DOWN 						= 10;
+		const int CLAW_OPEN 			= 55;
+		const int CLAW_CLOSED 			= 85;  
+		const int ARM_DOWN 				= 10;  
+		const int ARM_UP 				= 140;  
+		const int DUMP_UP 				= 100;
+		const int DUMP_DOWN 			= 10;
 
 		
 		const int stateMap[] = {

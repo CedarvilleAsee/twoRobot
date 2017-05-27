@@ -14,8 +14,8 @@
 #include <Servo.h>
 #include <Arduino.h>
 #include "Robot.h"
-#include "pins.h"
 #include "constants.h"
+#include "pins.h"
 #include "stateMachine.h"
 #include "PT6961.h"
 #include "Timer.h"
@@ -23,11 +23,10 @@
 using namespace stateMachine;
 
 
-//
-PT6961 display(DIN, CLOCK, CS);	    // The seven segment display 
-Robot theRobot;                     // A compilation of the Robot's data
+// The seven segment display 
+Robot theRobot;   // A compilation of the Robot's data
 int count; //Integer value counting the number of iterations through the main loop.
-
+PT6961 display(DIN, CLOCK, CS);	
 
 
 /*

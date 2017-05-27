@@ -34,7 +34,11 @@ void  stateMachine::execute(Robot& theRobot) {
       break;
 			
 		case LINE_FOLLOW_OFFSET:
-      lineFollow(theRobot, -2);
+			#ifdef R2_LEFT
+				lineFollow(theRobot, -2);
+			#else
+				lineFollow(theRobot, 2);
+			#endif			
       break;
       
     case LINE_FOLLOW_OFFSET2:
@@ -66,7 +70,6 @@ void  stateMachine::execute(Robot& theRobot) {
       digitalWrite(MC_AIN1, HIGH);  
       digitalWrite(MC_AIN2, LOW);
       writeToWheels(FULL_SPEED * 0.6, FULL_SPEED * 0.4);
-      //grabBarrel(theRobot);
 			ejectBarrel(theRobot);
       break;
 	  
@@ -133,7 +136,7 @@ void stateMachine::updateState(Robot& theRobot) {
 		#ifdef R2_LEFT
 			midStatesLeftBot(theRobot);
 			endStateLeftBot(theRobot);
-		#elif D2_RIGHT
+		#else
 			midStatesRightBot(theRobot);
 			endStateRightBot(theRobot);
 		#endif
@@ -175,7 +178,46 @@ void stateMachine::earlyStates(Robot& theRobot){
 				theRobot.currentState++;
 			}
 			break;
-      
+		case 27: //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
+		case 4:  //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
+			if(theRobot.oneTimer.isTimeUpUnset()){
+				theRobot.currentState++;
+			}
+			break;
+		
+		case 5: //LINE_FOLLOW_OFFSET -> EJECT_BARREL
+		case 16:
+			if(theRobot.wallSensorDistance < WALL_TRIGGER){
+				theRobot.currentState++;
+			}
+			break;    
+		
+		case 17: // EJECT_BARREL -> GRAB_BARREL
+		case 6:
+		
+			if(theRobot.clawSensorDistance < CLAW_GRAB_TRIGGER_1_3){
+				theRobot.currentState++;
+				theRobot.grabTimerInt = millis();
+				theRobot.oneTimer.set(1000);
+			}    
+			break; 
+			
+		case 7: // GRAB_BARREL -> LINE_FOLLOW_OFFSET
+			if(theRobot.oneTimer.isTimeUpUnset()){
+				theRobot.currentState++;
+				theRobot.ejectTimer.unset();
+				theRobot.oneTimer.unset();
+			}	  
+			
+			break;
+
+		case 8:    // LINE_FOLLOW_OFFSET -> LINE_FOLLOW_OFFSET
+			jiggleBox(theRobot);
+			if(!theRobot.oneTimer.isTimerSet() && theRobot.amountSeen > 3) {
+				theRobot.currentState++;
+				theRobot.oneTimer.set(200);
+			}
+			break;
 	}
 }	//end stateMachine::earlyStates
 
@@ -184,46 +226,7 @@ void stateMachine::earlyStates(Robot& theRobot){
 		void stateMachine::midStatesLeftBot(Robot& theRobot){
 			switch (theRobot.currentState) {
 				
-				case 27: //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
-				case 4:  //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
-					if(theRobot.oneTimer.isTimeUpUnset()){
-						theRobot.currentState++;
-					}
-					break;
-				
-				case 5: //LINE_FOLLOW_OFFSET -> EJECT_BARREL
-				case 16:
-					if(theRobot.wallSensorDistance < WALL_TRIGGER){
-						theRobot.currentState++;
-					}
-					break;    
-				
-				case 17: // EJECT_BARREL -> GRAB_BARREL
-				case 6:
-				
-					if(theRobot.clawSensorDistance < CLAW_GRAB_TRIGGER_1_3){
-						theRobot.currentState++;
-						theRobot.grabTimerInt = millis();
-						theRobot.oneTimer.set(1000);
-					}    
-					break; 
-					
-				case 7: // GRAB_BARREL -> LINE_FOLLOW_OFFSET
-					if(theRobot.oneTimer.isTimeUpUnset()){
-						theRobot.currentState++;
-						theRobot.ejectTimer.unset();
-						theRobot.oneTimer.unset();
-					}	  
-					
-					break;
 
-				case 8:    // LINE_FOLLOW_OFFSET -> LINE_FOLLOW_OFFSET
-					jiggleBox(theRobot);
-					if(!theRobot.oneTimer.isTimerSet() && theRobot.amountSeen > 3) {
-						theRobot.currentState++;
-						theRobot.oneTimer.set(200);
-					}
-					break;
 					
 				case 9:   // LINE_FOLLOW_OFFSET -> FIND_CORNER_BARREL
 					
@@ -379,38 +382,18 @@ void stateMachine::earlyStates(Robot& theRobot){
 		}//  end  stateMachine::endStateLeftBot
 		
 		
-#elif D2_RIGHT
+#else
 		
-		void midStatesRightBot(Robot& theRobot){
+		void stateMachine::midStatesRightBot(Robot& theRobot){
 			switch (theRobot.currentState) {
 
 				
-				//case 27: //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
-				case 4:  //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
-				
-					break;
-
-				case 5: //LINE_FOLLOW_OFFSET -> EJECT_BARREL
-				//case 16:
-					if(theRobot.wallSensorDistance < WALL_TRIGGER){
-						theRobot.currentState++;
-					}
-					break; 
-
-				case 17: // EJECT_BARREL -> GRAB_BARREL
-				case 6:
-				
-					break;
-
-				case 7: // GRAB_BARREL -> LINE_FOLLOW_OFFSET
-
-					break;
-
+			
 
 			}
 		} // end  midStatesRightBot
 		
-		void endStateRightBot(Robot& theRobot){
+		void stateMachine::endStateRightBot(Robot& theRobot){
 			switch (theRobot.currentState) {
 				
 					

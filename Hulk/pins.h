@@ -18,6 +18,25 @@
 #ifndef PINS_H
 #define PINS_H
 
+#ifndef R2_LEFT
+//#define R2_LEFT 3
+#endif
+
+
+#ifndef D2_RIGHT
+#define D2_RIGHT 1
+#endif
+/**
+*   BUTTONS
+*/
+#define STOP_BUTTON   PB4
+#define GO_BUTTON     PB5
+
+//7 segment pins
+#define  CS           PC13
+#define CLOCK         PC14
+#define DIN           PC15
+
 
 /******************************************\
 | Left Robot Pinouts                       |
@@ -53,11 +72,6 @@
 		#define ARM_SERVO     PA9
 		#define CLAW_SERVO    PB6
 
-		/**
-		 *   BUTTONS
-		 */
-		#define STOP_BUTTON   PB4
-		#define GO_BUTTON     PB5
 
 		/**
 		 * SENSORS
@@ -71,10 +85,6 @@
 		 #define SENSOR_6     PB11
 		 #define SENSOR_7     PA11
 
-		//7 segment pins
-		#define  CS           PC13
-		#define CLOCK         PC14
-		#define DIN           PC15
 
 		#define WALL_SENSOR1  PA4
 		#define CLAW_SENSOR   PA0
@@ -82,16 +92,12 @@
 
 		#define S_LED_ON     PA0
 	
-	#endif //R2_LEFT
-	
-	
-	
 	
 	/******************************************\
 	| Right Robot pinouts                      |
 	| D2 pinouts 	                             |
 	\******************************************/
-	#ifdef D2_RIGHT
+	#else
 	
 		/**
 		 * MOTOR CONTROLLER PINS
@@ -121,33 +127,23 @@
 		#define EJECT_SERVO   PA10
 		#define ARM_SERVO     PA9
 		#define CLAW_SERVO    PB6 
-
-		/**
-		 *   BUTTONS
-		 */
-		#define STOP_BUTTON   
-		#define GO_BUTTON     
+    
 
 		/**
 		 * SENSORS
 		 */
-		 #define SENSOR_0     PA5
-		 #define SENSOR_1     PA6
-		 #define SENSOR_2     PA7
-		 #define SENSOR_3     PA3
-		 #define SENSOR_4     PA15
-		 #define SENSOR_5     PB10
-		 #define SENSOR_6     PB11
-		 #define SENSOR_7     PA11  
+		 #define SENSOR_0     PA6
+		 #define SENSOR_1     PA7
+		 #define SENSOR_2     PB3
+		 #define SENSOR_3     PA15
+		 #define SENSOR_4     PA12
+		 #define SENSOR_5     PA11
+		 #define SENSOR_6     PB10
+		 #define SENSOR_7     PB11         
 
-		//7 segment pins
-		#define  CS           
-		#define CLOCK         
-		#define DIN           
-
-		#define WALL_SENSOR1  
-		#define CLAW_SENSOR   
-		#define FRONT_SENSOR  
+		#define WALL_SENSOR1  PA4
+		#define CLAW_SENSOR   PA0
+		#define FRONT_SENSOR  PA2
 
 		#define S_LED_ON     
 	

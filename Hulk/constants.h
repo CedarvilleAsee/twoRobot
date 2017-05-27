@@ -151,7 +151,7 @@
 		const int ARM_DOWN 				= 10;  
 		const int ARM_UP 				= 140;  
 		const int DUMP_UP 				= 100;
-		const int DUMP_DOWN 			= 10;
+		const int DUMP_DOWN 			= 15;
 
 		//spain wall following constants
 		const int WALL_F_FRONT_FAR_GAIN   = 370;

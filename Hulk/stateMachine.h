@@ -28,7 +28,7 @@ namespace stateMachine{
   void writeToWheels(int leftSpeed, int rightSpeed);
 
   
-	void earlyStates(Robot& theRobot);
+	void commonStates(Robot& theRobot);
 	#ifdef R2_LEFT
 		void midStatesLeftBot(Robot& theRobot);
 		void endStateLeftBot(Robot& theRobot);

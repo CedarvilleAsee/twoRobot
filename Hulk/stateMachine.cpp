@@ -49,9 +49,8 @@ void  stateMachine::execute(Robot& theRobot) {
       writeToWheels(FULL_SPEED, FULL_SPEED);
       break;
       
-    case GRAB_BARREL:
+    case GRAB_BARREL://using fall through
 			grabBarrel(theRobot);
-			
 		case EJECT_BARREL:
 			ejectBarrel(theRobot);
 			lineFollow(theRobot, -2);
@@ -67,9 +66,16 @@ void  stateMachine::execute(Robot& theRobot) {
       break;
 	  
     case ROUND_A_BOUT:
-      digitalWrite(MC_AIN1, HIGH);  
-      digitalWrite(MC_AIN2, LOW);
-      writeToWheels(FULL_SPEED * 0.6, FULL_SPEED * 0.4);
+			#ifdef R2_LEFT
+				digitalWrite(MC_AIN1, HIGH);  
+				digitalWrite(MC_AIN2, LOW);
+				writeToWheels(FULL_SPEED * 0.6, FULL_SPEED * 0.4);
+			#else
+				digitalWrite(MC_BIN1, HIGH);  
+				digitalWrite(MC_BIN2, LOW);
+				writeToWheels(FULL_SPEED * 0.4, FULL_SPEED * 0.6);
+			#endif
+
 			ejectBarrel(theRobot);
       break;
 	  
@@ -132,7 +138,7 @@ void stateMachine::updateState(Robot& theRobot) {
     return;
   }
 	else{
-		earlyStates(theRobot);
+		commonStates(theRobot);
 		#ifdef R2_LEFT
 			midStatesLeftBot(theRobot);
 			endStateLeftBot(theRobot);
@@ -144,7 +150,7 @@ void stateMachine::updateState(Robot& theRobot) {
 
 }
 
-void stateMachine::earlyStates(Robot& theRobot){
+void stateMachine::commonStates(Robot& theRobot){
 	
 	switch (theRobot.currentState) {
 		case 0: // WAIT -> DEPART_SPAIN
@@ -186,14 +192,22 @@ void stateMachine::earlyStates(Robot& theRobot){
 			break;
 		
 		case 5: //LINE_FOLLOW_OFFSET -> EJECT_BARREL
-		case 16:
+		#ifdef R2_LEFT
+			case 16:	//LINE_FOLLOW_OFFSET -> EJECT_BARREL
+		#else
+			case 17:
+		#endif
 			if(theRobot.wallSensorDistance < WALL_TRIGGER){
 				theRobot.currentState++;
 			}
 			break;    
-		
-		case 17: // EJECT_BARREL -> GRAB_BARREL
-		case 6:
+
+		#ifdef R2_LEFT
+			case 17: // EJECT_BARREL -> GRAB_BARREL
+		#else
+			case 18:
+		#endif
+		case 6:	// EJECT_BARREL -> GRAB_BARREL
 		
 			if(theRobot.clawSensorDistance < CLAW_GRAB_TRIGGER_1_3){
 				theRobot.currentState++;
@@ -211,6 +225,9 @@ void stateMachine::earlyStates(Robot& theRobot){
 			
 			break;
 
+		#ifdef D2_RIGHT
+			case 15:   // LINE_FOLLOW -> LINE_FOLLOW
+		#endif	
 		case 8:    // LINE_FOLLOW_OFFSET -> LINE_FOLLOW_OFFSET
 			jiggleBox(theRobot);
 			if(!theRobot.oneTimer.isTimerSet() && theRobot.amountSeen > 3) {
@@ -218,76 +235,86 @@ void stateMachine::earlyStates(Robot& theRobot){
 				theRobot.oneTimer.set(200);
 			}
 			break;
+
+		case 9:   // LINE_FOLLOW_OFFSET -> FIND_CORNER_BARREL
+			
+			jiggleBox(theRobot);
+			if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
+				theRobot.currentState++;
+			}
+			break;
+			
+		case 10: //FIND_CORNER_BARREL -> GRAB_CORNER_BARREL
+			if(theRobot.clawSensorDistance < CLAW_GRAB_TRIGGER_2){
+				theRobot.currentState++;
+				theRobot.grabTimerInt = millis();
+				theRobot.ejectTimer.unset();
+			}
+			break;
+			
+			
+		case 11: // GRAB_CORNER_BARREL -> ROUND_A_BOUT
+			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN); 
+			if(theRobot.frontSensorDistance < FRONT_CORNER_TRIGGER){
+				theRobot.currentState++;
+			}
+			break;
+		
+		case 13: //ROUND_A_BOUT -> LINE_FOLLOW			
+		case 12: //ROUND_A_BOUT -> ROUND_A_BOUT
+			
+			if(theRobot.amountSeen > 1 && !theRobot.oneTimer.isTimerSet()){
+					theRobot.currentState++;
+					theRobot.oneTimer.set(150);
+			}
+			else if(theRobot.firstLineIndex == 3 && theRobot.oneTimer.isTimeUpUnset()){
+				theRobot.currentState++;
+				theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
+			}
+			break;   	
+
+							//LINE_FOLLOW -> LEFT_TURN: R2_LEFT
+		case 14: //LINE_FOLLOW -> LINE_FOLLOW: D2_RIGHT
+			#ifdef R2_LEFT
+				digitalWrite(MC_AIN1, LOW);
+				digitalWrite(MC_AIN2, HIGH);
+			#else //D2_RIGHT
+				digitalWrite(MC_BIN1, LOW);
+				digitalWrite(MC_BIN2, HIGH);
+			#endif
+			
+			if(!theRobot.oneTimer.isTimerSet()){ 
+				theRobot.oneTimer.set(400);
+			}
+			else if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
+				theRobot.currentState++;
+				theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
+			}
+			break;		
+
+		#ifdef R2_LEFT
+			case 15: // LEFT_TURN -> LINE_FOLLOW_OFFSET  
+		#else //D2_RIGHT
+			case 16: // LEFT_TURN -> LINE_FOLLOW_OFFSET
+		#endif
+
+			if(!theRobot.oneTimer.isTimerSet()){
+				theRobot.ejectTimer.unset();
+				theRobot.oneTimer.set(400);
+			}
+			else if(theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUpUnset()) {
+				theRobot.currentState++;
+			}
+			break;
+			
 	}
 }	//end stateMachine::earlyStates
 
 #ifdef R2_LEFT
 
-		void stateMachine::midStatesLeftBot(Robot& theRobot){
+		void stateMachine::endStateLeftBot(Robot& theRobot){
 			switch (theRobot.currentState) {
-				
 
-					
-				case 9:   // LINE_FOLLOW_OFFSET -> FIND_CORNER_BARREL
-					
-					jiggleBox(theRobot);
-					if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
-						theRobot.currentState++;
-					}
-					break;
-					
-				case 10: //FIND_CORNER_BARREL -> GRAB_CORNER_BARREL
-					if(theRobot.clawSensorDistance < CLAW_GRAB_TRIGGER_2){
-						theRobot.currentState++;
-						theRobot.grabTimerInt = millis();
-						theRobot.ejectTimer.unset();
-					}
-					break;
-				 
-					
-				case 11: // GRAB_CORNER_BARREL -> ROUND_A_BOUT
-					theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN); 
-					if(theRobot.frontSensorDistance < FRONT_CORNER_TRIGGER){
-						theRobot.currentState++;
-					}
-					break;
-				
-				case 13: //ROUND_A_BOUT -> LINE_FOLLOW			
-				case 12: //ROUND_A_BOUT -> ROUND_A_BOUT
-					
-					if(theRobot.amountSeen > 1 && !theRobot.oneTimer.isTimerSet()){
-							theRobot.currentState++;
-							theRobot.oneTimer.set(150);
-					}
-					else if(theRobot.firstLineIndex == 3 && theRobot.oneTimer.isTimeUpUnset()){
-						theRobot.currentState++;
-						theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
-					}
-					break;    
-				
-				case 14: //LINE_FOLLOW -> LEFT_TURN
-				
-					digitalWrite(MC_AIN1, LOW);
-					digitalWrite(MC_AIN2, HIGH);
-					if(!theRobot.oneTimer.isTimerSet()){ 
-						theRobot.oneTimer.set(400);
-					}
-					else if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
-						theRobot.currentState++;
-						theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
-					}
-					break;
-				
-				case 15: // LEFT_TURN -> LINE_FOLLOW_OFFSET  
-					if(!theRobot.oneTimer.isTimerSet()){
-						theRobot.ejectTimer.unset();
-						theRobot.oneTimer.set(400);
-					}
-					else if(theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUpUnset()) {
-						theRobot.currentState++;
-					}
-					break;
-				
 				case 18: // GRAB_BARREL -> LINE_FOLLOW_OFFSET
 				
 					if(theRobot.amountSeen > 4) {
@@ -296,11 +323,7 @@ void stateMachine::earlyStates(Robot& theRobot){
 						theRobot.writeToServo(theRobot.ARM, ARM_UP);
 					}
 					break;
-			}
-		}//  end stateMachine::midStatesLeftBot
-		
-		void stateMachine::endStateLeftBot(Robot& theRobot){
-			switch (theRobot.currentState) {
+
 				case 19: //RIGHT_TURN -> LINE_FOLLOW
 					if(theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUpUnset()) {
 						theRobot.currentState++;
@@ -399,7 +422,8 @@ void stateMachine::earlyStates(Robot& theRobot){
 					
 			}
 		}//end  endStateRightBot
-#endif
+#endif // end D2_RIGHT
+
 /*
   writeToWheels method:
 
@@ -508,12 +532,15 @@ void stateMachine::lineFollow(Robot& theRobot, int offset){
 	}else if(index > 14){
 		index = 14;
 	}	
-	
+	#ifdef D2_RIGHT
+		index = 14 - index; //inverting for rightbot
+	#endif
 	writeToWheels(LEFT_WHEEL_SPEEDS[index], RIGHT_WHEEL_SPEEDS[index]);	
+
 }
 
 /**
- * reset method
+ * resetRobot method
  * created by NH & DF on 3/31/17 
  * this method resets the state to 0 and resets the function timing values to their default
  * this method is a full stop for the robot

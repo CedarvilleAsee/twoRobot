@@ -86,7 +86,7 @@
 		 #define SENSOR_7     PA11
 
 
-		#define WALL_SENSOR1  PA4
+		#define WALL_SENSOR1  PA1
 		#define CLAW_SENSOR   PA0
 		#define FRONT_SENSOR  PA2
 
@@ -141,7 +141,7 @@
 		 #define SENSOR_6     PB10
 		 #define SENSOR_7     PB11         
 
-		#define WALL_SENSOR1  PA4
+		#define WALL_SENSOR1  PA1
 		#define CLAW_SENSOR   PA0
 		#define FRONT_SENSOR  PA2
 

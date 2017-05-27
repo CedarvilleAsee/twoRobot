@@ -161,7 +161,7 @@
 		//sensor trigger distances
 		const int CLAW_GRAB_TRIGGER_1_3	= 2500;
 		const int CLAW_GRAB_TRIGGER_2  	= 2100;
-		const int WALL_TRIGGER          = 3550;
+		const int WALL_TRIGGER          = 3550;/*****/
 		const int FRONT_CORNER_TRIGGER  = 2500;
 
 		//wall following constants
@@ -180,7 +180,7 @@
 		const int stateMap[] = {
 			WAIT,                 //start sequence
 			DEPART_SPAIN,
-			HANDLE_OBSTACLE,      //obstacle sequence
+			HANDLE_OBSTACLE,      //obstacle sequence; problem
 			FIND_LINE,
 			LINE_FOLLOW_OFFSET2,   //4
 			
@@ -196,24 +196,23 @@
 			ROUND_A_BOUT,
 			LINE_FOLLOW,  //14
 			
+			LINE_FOLLOW,
 			LEFT_TURN,    
 			LINE_FOLLOW_OFFSET,    //third barrel pickup/drop
 			EJECT_BARREL,          
-			GRAB_BARREL,           
-			RIGHT_TURN,     //19
-			
+			GRAB_BARREL,     //19
+
+			LEFT_TURN,     
 			LINE_FOLLOW,     
 			LINE_FOLLOW,
 			LINE_FOLLOW,
-			HANDLE_OBSTACLE,  
-			WALL_FOLLOW_FAR,   //24
-			
-			WALL_FOLLOW_FAR,
+			HANDLE_OBSTACLE,  //24
+
 			FIND_LINE,            
 			LINE_FOLLOW,   
 			LINE_FOLLOW_OFFSET,   
-			COME_HOME,      //29
-			DUMP_BARRELS        
+			COME_HOME,      
+			DUMP_BARRELS        //29
 		};
 	#endif
   

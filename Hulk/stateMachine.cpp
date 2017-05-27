@@ -204,8 +204,8 @@ void stateMachine::commonStates(Robot& theRobot){
 
 		#ifdef R2_LEFT
 			case 17: // EJECT_BARREL -> GRAB_BARREL
-		#else
-			case 18:
+		#else //D2_RIGHT
+			case 18: // EJECT_BARREL -> GRAB_BARREL
 		#endif
 		case 6:	// EJECT_BARREL -> GRAB_BARREL
 		
@@ -306,50 +306,56 @@ void stateMachine::commonStates(Robot& theRobot){
 				theRobot.currentState++;
 			}
 			break;
+		#ifdef R2_LEFT
+			case 18: // GRAB_BARREL -> LINE_FOLLOW_OFFSET
+		#else	//D2_RIGHT
+			case 19: // GRAB_BARREL -> LINE_FOLLOW_OFFSET
+		#endif
+			if(theRobot.amountSeen > 4) {
+				theRobot.currentState++; 
+				theRobot.oneTimer.set(KICKER_MOVE_BACK_TIME);
+				theRobot.writeToServo(theRobot.ARM, ARM_UP);
+			}
+			break;
+
+		#ifdef R2_LEFT
+			case 19: //RIGHT_TURN -> LINE_FOLLOW
+		#else //D2_RIGHT
+			case 20: //LEFT_TURN -> LINE_FOLLOW
+		#endif
+			if(theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUpUnset()) {
+				theRobot.currentState++;
+			}
+			break;
+		
+		case 21:   //LINE_FOLLOW -> LINE_FOLLOW
+			jiggleBox(theRobot);
+			if(theRobot.wallSensorDistance > WALL_TRIGGER + 50){
+				theRobot.oneTimer.set(400);
+				theRobot.currentState++;
+			}
+			break;
+
+		case 22: //LINE_FOLLOW -> WALL_FOLLOW
+			if(theRobot.oneTimer.isTimeUp()){
+				theRobot.currentState++;
+				theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
+			}
+			break;
 			
 	}
-}	//end stateMachine::earlyStates
+}	//end stateMachine::commonStates
 
 #ifdef R2_LEFT
 
 		void stateMachine::endStateLeftBot(Robot& theRobot){
 			switch (theRobot.currentState) {
 
-				case 18: // GRAB_BARREL -> LINE_FOLLOW_OFFSET
-				
-					if(theRobot.amountSeen > 4) {
-						theRobot.currentState++; 
-						theRobot.oneTimer.set(KICKER_MOVE_BACK_TIME);
-						theRobot.writeToServo(theRobot.ARM, ARM_UP);
-					}
-					break;
-
-				case 19: //RIGHT_TURN -> LINE_FOLLOW
-					if(theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUpUnset()) {
-						theRobot.currentState++;
-					}
-					break;
-					
 				case 20:  //LINE_FOLLOW -> LINE_FOLLOW
 					jiggleBox(theRobot);
 					theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
 					if(theRobot.wallSensorDistance < WALL_TRIGGER){
 						theRobot.currentState++;
-					}
-					break;
-					
-				case 21:   //LINE_FOLLOW -> LINE_FOLLOW
-					jiggleBox(theRobot);
-					if(theRobot.wallSensorDistance > WALL_TRIGGER + 50){
-						theRobot.oneTimer.set(400);
-						theRobot.currentState++;
-					}
-					break;
-				
-				case 22: //LINE_FOLLOW -> WALL_FOLLOW
-					if(theRobot.oneTimer.isTimeUp()){
-						theRobot.currentState++;
-						theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
 					}
 					break;
 				
@@ -410,7 +416,8 @@ void stateMachine::commonStates(Robot& theRobot){
 		void stateMachine::midStatesRightBot(Robot& theRobot){
 			switch (theRobot.currentState) {
 
-				
+				case 0:
+					break;
 			
 
 			}
@@ -418,7 +425,8 @@ void stateMachine::commonStates(Robot& theRobot){
 		
 		void stateMachine::endStateRightBot(Robot& theRobot){
 			switch (theRobot.currentState) {
-				
+				case 0:
+					break;
 					
 			}
 		}//end  endStateRightBot

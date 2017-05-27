@@ -77,17 +77,12 @@ void setup() {
   digitalWrite(MC_BIN2, LOW); 
 
   
-/*  // Attach the Robot's Servos to the Arduino pins
+  // Attach the Robot's Servos to the Arduino pins
   theRobot.getServo(theRobot.EJECT).attach(EJECT_SERVO);   //this isn't working for some unknown reason
   theRobot.getServo(theRobot.ARM).attach(ARM_SERVO);       //the Robot class has been modified to make the
   theRobot.getServo(theRobot.DUMP).attach(DUMP_SERVO);     //servos public 3/2/17 NH
   theRobot.getServo(theRobot.CLAW).attach(CLAW_SERVO);
-*/
-  display.sendDigits(2, 3, 4, 5, 0);
-  theRobot.motors[theRobot.EJECT].attach(EJECT_SERVO);
-  theRobot.motors[theRobot.CLAW].attach(CLAW_SERVO);
-  theRobot.motors[theRobot.ARM].attach(ARM_SERVO);
-  theRobot.motors[theRobot.DUMP].attach(DUMP_SERVO);
+
   // Set the initial position of the Servo
   theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
   theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
@@ -125,8 +120,8 @@ void loop() {
   count++;
   // Send a debug message if the number of loops has exceeded 131
   if(count % 131 == 0){
-		debug(theRobot.wallSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
-            (theRobot.wallSensorDistance%100)/10, theRobot.currentState % 10);
+		debug(theRobot.frontSensorDistance/1000, (theRobot.frontSensorDistance%1000)/ 100, 
+            (theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
     //debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
           //(theRobot.currentState)/10, theRobot.currentState % 10);
    

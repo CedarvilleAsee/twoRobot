@@ -559,7 +559,6 @@ void stateMachine::resetRobot(Robot& theRobot){
  * to keep the robot on at a constant distance from the wall 
  */
 void stateMachine::wallFollow(Robot& theRobot, int center){
-
   float ratio = 0.0;
   if(theRobot.wallSensorDistance < center){ //turn right
     ratio = (center  - theRobot.wallSensorDistance)/WALL_FOLLOW_FAR_GAIN;
@@ -567,7 +566,12 @@ void stateMachine::wallFollow(Robot& theRobot, int center){
     if(ratio < 0.0){
         ratio = 0.0;
     }		
-    writeToWheels(FULL_SPEED, FULL_SPEED*(ratio));
+    
+    #ifdef R2_LEFT
+      writeToWheels(FULL_SPEED, FULL_SPEED*(ratio));
+    #else
+      writeToWheels(FULL_SPEED * ratio, FULL_SPEED);
+    #endif
   }	
   else{ //turn left
     ratio = (theRobot.wallSensorDistance - center)/WALL_FOLLOW_CLOSE_GAIN;
@@ -575,7 +579,12 @@ void stateMachine::wallFollow(Robot& theRobot, int center){
     if(ratio < 0.0){
       ratio = 0.0;
     }
-    writeToWheels(FULL_SPEED*(ratio), FULL_SPEED);
+  
+    #ifdef R2_LEFT
+      writeToWheels(FULL_SPEED, FULL_SPEED*(ratio));
+    #else
+      writeToWheels(FULL_SPEED * ratio, FULL_SPEED);
+    #endif
   } 
 }
 

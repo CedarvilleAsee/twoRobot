@@ -145,7 +145,7 @@
 		| D2 constants                             |
 		\******************************************/
 		const int EJECT_FRONT_POSITION  = 115;
-		const int EJECT_BACK_POSITION   = 95;
+		const int EJECT_BACK_POSITION   = 85;
 		const int CLAW_OPEN 			= 55;
 		const int CLAW_CLOSED 			= 85;  
 		const int ARM_DOWN 				= 10;  
@@ -180,39 +180,41 @@
 		const int stateMap[] = {
 			WAIT,                 //start sequence
 			DEPART_SPAIN,
-			HANDLE_OBSTACLE,      //obstacle sequence; problem
-			FIND_LINE,
-			LINE_FOLLOW_OFFSET2,   //4
-			
+			LINE_FOLLOW,      //obstacle sequence; problem
+			HANDLE_OBSTACLE,
+			FIND_LINE,				//4
+
+			LINE_FOLLOW_OFFSET2,   
 			LINE_FOLLOW_OFFSET,
 			EJECT_BARREL,          //first barrel eject/pickup
 			GRAB_BARREL,           
-			LINE_FOLLOW_OFFSET,    //counting lines
-			LINE_FOLLOW_OFFSET,    //9
+			LINE_FOLLOW_OFFSET,    // 9 counting lines
 			
+			LINE_FOLLOW_OFFSET,   
 			FIND_CORNER_BARREL,   
 			GRAB_CORNER_BARREL,
 			ROUND_A_BOUT,         
-			ROUND_A_BOUT,
-			LINE_FOLLOW,  //14
+			ROUND_A_BOUT, //14
 			
+			LINE_FOLLOW,  
 			LINE_FOLLOW,
 			LEFT_TURN,    
 			LINE_FOLLOW_OFFSET,    //third barrel pickup/drop
-			EJECT_BARREL,          
-			GRAB_BARREL,     //19
-
+			EJECT_BARREL,        //19  
+			
+			GRAB_BARREL,     
 			LEFT_TURN,     
 			LINE_FOLLOW,     
 			LINE_FOLLOW,
-			LINE_FOLLOW,
-			HANDLE_OBSTACLE,  //24
+			LINE_FOLLOW,   //24
 
+			HANDLE_OBSTACLE,  
 			FIND_LINE,            
 			LINE_FOLLOW,   
 			LINE_FOLLOW_OFFSET,   
-			COME_HOME,      
-			DUMP_BARRELS        //29
+			COME_HOME,      //29
+
+			DUMP_BARRELS        
 		};
 	#endif
   

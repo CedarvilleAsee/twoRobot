@@ -34,7 +34,6 @@ namespace stateMachine{
 		void endStateLeftBot(Robot& theRobot);
 	#else
 		void midStatesRightBot(Robot& theRobot);
-		void endStateRightBot(Robot& theRobot);
 	#endif
   void ejectBarrel(Robot& theRobot);
   void lineFollow(Robot& theRobot, int offset = 0);

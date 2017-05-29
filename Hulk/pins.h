@@ -11,6 +11,8 @@
  *   - modified pin mapping for new shield 2/11/17 NSH
  *		- modified file to have inclusion guards so this file can be 
  * 			used for both robot's (R2 and D2) pinouts
+ *		Do NOT USE PA12 or PA15 they are pulled to 3.3 volts by default
+ *
  */
  
 #include <Arduino.h>
@@ -135,8 +137,8 @@
 		 #define SENSOR_0     PA6
 		 #define SENSOR_1     PA7
 		 #define SENSOR_2     PB3
-		 #define SENSOR_3     PA15
-		 #define SENSOR_4     PA12
+		 #define SENSOR_3     PA4
+		 #define SENSOR_4     PA5
 		 #define SENSOR_5     PA11
 		 #define SENSOR_6     PB10
 		 #define SENSOR_7     PB11         

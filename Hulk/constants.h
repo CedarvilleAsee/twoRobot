@@ -9,7 +9,7 @@
 
 #ifndef D2_RIGHT
 #define D2_RIGHT 1
-	const int FULL_SPEED = 100;
+	const int FULL_SPEED = 125;
 #endif
 
 	enum State {
@@ -29,7 +29,7 @@
 		LINE_FOLLOW_OFFSET2= 13, //offset right
 		DUMP_BARRELS       = 14,
 		WALL_FOLLOW_FAR    = 15,
-		COME_HOME					 = 16
+		COME_HOME		   = 16
 	};
 
 
@@ -148,7 +148,7 @@
 		const int EJECT_BACK_POSITION   = 85;
 		const int CLAW_OPEN 			= 55;
 		const int CLAW_CLOSED 			= 85;  
-		const int ARM_DOWN 				= 10;  
+		const int ARM_DOWN 				= 5;  
 		const int ARM_UP 				= 140;  
 		const int DUMP_UP 				= 100;
 		const int DUMP_DOWN 			= 15;
@@ -162,7 +162,7 @@
 		const int CLAW_GRAB_TRIGGER_1_3	= 2500;
 		const int CLAW_GRAB_TRIGGER_2  	= 2100;
 		const int WALL_TRIGGER          = 3550;/*****/
-		const int FRONT_CORNER_TRIGGER  = 2500;
+		const int FRONT_CORNER_TRIGGER  = 3000;
 
 		//wall following constants
 		const int WALL_FOLLOW_CENTER  	= 3650;
@@ -198,7 +198,7 @@
 			
 			LINE_FOLLOW,  
 			LINE_FOLLOW,
-			LEFT_TURN,    
+			RIGHT_TURN,    
 			LINE_FOLLOW_OFFSET,    //third barrel pickup/drop
 			EJECT_BARREL,        //19  
 			

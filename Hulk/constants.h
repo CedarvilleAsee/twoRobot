@@ -115,25 +115,27 @@
 			GRAB_CORNER_BARREL,
 			ROUND_A_BOUT,         
 			ROUND_A_BOUT,
-			LINE_FOLLOW,  //14
-			
+			ROUND_A_BOUT,	//14
+
+			LINE_FOLLOW,  
 			LEFT_TURN,    
 			LINE_FOLLOW_OFFSET,    //third barrel pickup/drop
 			EJECT_BARREL,          
-			GRAB_BARREL,           
-			RIGHT_TURN,     //19
-			
+			GRAB_BARREL,           //19
+
+			RIGHT_TURN,     			
 			LINE_FOLLOW,     
 			LINE_FOLLOW,
 			LINE_FOLLOW,
-			HANDLE_OBSTACLE,  
-			WALL_FOLLOW_FAR,   //24
-			
+			HANDLE_OBSTACLE,  //24
+	
+			WALL_FOLLOW_FAR,   		
 			WALL_FOLLOW_FAR,
 			FIND_LINE,            
 			LINE_FOLLOW,   
-			LINE_FOLLOW_OFFSET,   
-			COME_HOME,      //29
+			LINE_FOLLOW_OFFSET,   //29
+
+			COME_HOME,      
 			DUMP_BARRELS        
 		};
 
@@ -162,7 +164,7 @@
 		const int CLAW_GRAB_TRIGGER_1_3	= 2500;
 		const int CLAW_GRAB_TRIGGER_2  	= 2100;
 		const int WALL_TRIGGER          = 3550;/*****/
-		const int FRONT_CORNER_TRIGGER  = 3000;
+		const int FRONT_CORNER_TRIGGER  = 3100;
 
 		//wall following constants
 		const int WALL_FOLLOW_CENTER  	= 3650;
@@ -196,24 +198,25 @@
 			ROUND_A_BOUT,         
 			ROUND_A_BOUT, //14
 			
+			ROUND_A_BOUT,
 			LINE_FOLLOW,  
 			LINE_FOLLOW,
 			RIGHT_TURN,    
-			LINE_FOLLOW_OFFSET,    //third barrel pickup/drop
-			EJECT_BARREL,        //19  
-			
+			LINE_FOLLOW_OFFSET,    //19  third barrel pickup/drop
+
+			EJECT_BARREL,      
 			GRAB_BARREL,     
 			LEFT_TURN,     
 			LINE_FOLLOW,     
-			LINE_FOLLOW,
-			LINE_FOLLOW,   //24
+			HANDLE_OBSTACLE,    //24
 
+			HANDLE_OBSTACLE,   
 			HANDLE_OBSTACLE,  
 			FIND_LINE,            
 			LINE_FOLLOW,   
-			LINE_FOLLOW_OFFSET,   
-			COME_HOME,      //29
+			LINE_FOLLOW_OFFSET,   //29
 
+			COME_HOME,      
 			DUMP_BARRELS        
 		};
 	#endif

@@ -123,7 +123,7 @@ void loop() {
 		//debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
             //(theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
     debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
-          (theRobot.currentState)/10, theRobot.currentState % 10);
+          (theRobot.amountSeen), theRobot.currentState % 10);
    
   }
  

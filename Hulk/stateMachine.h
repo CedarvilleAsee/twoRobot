@@ -36,6 +36,7 @@ namespace stateMachine{
 		void midStatesRightBot(Robot& theRobot);
 	#endif
   void ejectBarrel(Robot& theRobot);
+  void ejectCornerBarrel(Robot& theRobot);
   void lineFollow(Robot& theRobot, int offset = 0);
   void grabBarrel(Robot& theRobot);
   void handleObstacle(Robot& theRobot, int numLines);

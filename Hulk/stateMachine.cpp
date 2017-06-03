@@ -62,10 +62,10 @@ void  stateMachine::execute(Robot& theRobot) {
 	  
     case GRAB_CORNER_BARREL:
       grabBarrel(theRobot);
-			ejectBarrel(theRobot);
+			ejectCornerBarrel(theRobot);
 			
 		case FIND_CORNER_BARREL:
-				writeToWheels(FULL_SPEED*.6, FULL_SPEED*.6);
+				writeToWheels(FULL_SPEED*.5, FULL_SPEED*.5);
         jiggleBox(theRobot);
       break;
 	  
@@ -73,11 +73,12 @@ void  stateMachine::execute(Robot& theRobot) {
 			#ifdef R2_LEFT
 				digitalWrite(MC_AIN1, HIGH);  
 				digitalWrite(MC_AIN2, LOW);
-				writeToWheels(FULL_SPEED * 0.6, FULL_SPEED * 0.4);
+				writeToWheels(FULL_SPEED * 0.5, FULL_SPEED * 0.5);
 			#else
 				digitalWrite(MC_BIN1, LOW);  
 				digitalWrite(MC_BIN2, HIGH);
-				writeToWheels(FULL_SPEED * 0.6, FULL_SPEED * 0.6);
+				writeToWheels(FULL_SPEED * 0.5, FULL_SPEED * 0.5);
+				grabBarrel(theRobot);
 			#endif
 
 			ejectBarrel(theRobot);
@@ -86,6 +87,12 @@ void  stateMachine::execute(Robot& theRobot) {
     case LEFT_TURN:
       writeToWheels(0, FULL_SPEED);
       break;
+		
+		case LEFT_TURN_SPIN:
+			digitalWrite(MC_BIN1, LOW);  
+			digitalWrite(MC_BIN2, HIGH);
+			writeToWheels(FULL_SPEED * .45, FULL_SPEED* .7);
+			break;
       
       
     case RIGHT_TURN:
@@ -158,6 +165,7 @@ void stateMachine::commonStates(Robot& theRobot){
       resetRobot(theRobot);
 			if (digitalRead(GO_BUTTON) == LOW) {
         accelerate(0, FULL_SPEED, 300);
+				theRobot.writeToServo(theRobot.ARM, ARM_MID);
         theRobot.currentState++; //=9 to start from just after first pickup
       }
       break;
@@ -167,31 +175,32 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT	
 	  	case 2: //HANDLE_OBSTACLE -> FIND_LINE
 				if(!theRobot.oneTimer.isTimerSet() && theRobot.amountSeen > 4){
-					theRobot.oneTimer.set(2100);
+					theRobot.oneTimer.set(2100*TIMING_CONST);
 				}
     #else //D2_RIGHT
-			case 3:
+			case 5:
 		#endif
       if(theRobot.oneTimer.isTimeUpUnset()){
+				theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
         theRobot.currentState++;
       }
       break;
 		#ifdef R2_LEFT
 			case 3: //FIND_LINE -> LINE_FOLLOW
 		#else //D2_RIGHT
-			case 4:
+			case 6:
 		#endif
 			if(theRobot.amountSeen > 1){
-				theRobot.oneTimer.set(400);
+				theRobot.oneTimer.set(400*TIMING_CONST);
 				theRobot.currentState++;
 			}
 			break;
 
-		case 28: //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
+		case 30: //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
 		#ifdef R2_LEFT
 			case 4:  //LINE_FOLLOW -> LINE_FOLLOW_OFFSET
 		#else //D2_RIGHT
-			case 5:
+			case 7:
 		#endif
 			if(theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
@@ -203,10 +212,10 @@ void stateMachine::commonStates(Robot& theRobot){
 			case 5: //LINE_FOLLOW_OFFSET -> EJECT_BARREL
 			case 17:	//LINE_FOLLOW_OFFSET -> EJECT_BARREL
 		#else
-			case 6:
-			case 19:
+			case 8:
+			case 21:
 		#endif
-			if(theRobot.wallSensorDistance < 3400){
+			if(theRobot.wallSensorDistance < WALL_TRIGGER){
 				theRobot.currentState++;
 			}
 			break;    
@@ -215,20 +224,20 @@ void stateMachine::commonStates(Robot& theRobot){
 			case 6:	// EJECT_BARREL -> GRAB_BARREL
 			case 18: // EJECT_BARREL -> GRAB_BARREL
 		#else //D2_RIGHT
-			case 7:
-			case 20: // EJECT_BARREL -> GRAB_BARREL
+			case 9:
+			case 22: // EJECT_BARREL -> GRAB_BARREL
 		#endif
 		
 			if(theRobot.clawSensorDistance < CLAW_GRAB_TRIGGER_1_3){
 				theRobot.currentState++;
 				theRobot.grabTimerInt = millis();
-				theRobot.oneTimer.set(1000);
+				theRobot.oneTimer.set(1000*TIMING_CONST) ;
 			}    
 			break; 
 		#ifdef R2_LEFT	
 			case 7: // GRAB_BARREL -> LINE_FOLLOW_OFFSET
 		#else 	//D2_RIGHT
-			case 8:
+			case 10:
 		#endif
 			if(theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
@@ -242,20 +251,20 @@ void stateMachine::commonStates(Robot& theRobot){
 			case 15:   // LINE_FOLLOW -> LINE_FOLLOW
 			case 8:    // LINE_FOLLOW_OFFSET -> LINE_FOLLOW_OFFSET
 		#else 
-			case 9: // LINE_FOLLOW -> LINE_FOLLOW
+			case 11: // LINE_FOLLOW -> LINE_FOLLOW
 		#endif	
 		
 			jiggleBox(theRobot);
 			if(!theRobot.oneTimer.isTimerSet() && theRobot.amountSeen > 3) {
 				theRobot.currentState++;
-				theRobot.oneTimer.set(500);
+				theRobot.oneTimer.set(500*TIMING_CONST);
 			}
 			break;
 
 		#ifdef R2_LEFT
 			case 9:   // LINE_FOLLOW_OFFSET -> FIND_CORNER_BARREL
 		#else // D2_RIGHT
-			case 10:
+			case 12:
 		#endif 	
 			jiggleBox(theRobot);
 			if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
@@ -266,7 +275,7 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT
 			case 10: //FIND_CORNER_BARREL -> GRAB_CORNER_BARREL
 		#else	// D2_RIGHT
-			case 11:
+			case 13:
 		#endif
 			if(theRobot.clawSensorDistance < CLAW_GRAB_TRIGGER_2){
 				theRobot.currentState++;
@@ -278,11 +287,11 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT
 			case 11: // GRAB_CORNER_BARREL -> ROUND_A_BOUT
 		#else  // D2_RIGHT
-			case 12:
+			case 14:
 		#endif
 			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN); 
 			if(theRobot.frontSensorDistance < FRONT_CORNER_TRIGGER){
-				theRobot.oneTimer.set(300);
+				theRobot.oneTimer.set(300*TIMING_CONST);
 				theRobot.currentState++;
 			}
 			break;
@@ -290,18 +299,18 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT	
 			case 12: //ROUND_A_BOUT -> ROUND_A_BOUT
 		#else // D2_RIGHT
-			case 13: //ROUND_A_BOUT -> ROUND_A_BOUT			
+			case 15: //ROUND_A_BOUT -> ROUND_A_BOUT			
 		#endif
 			if(theRobot.wallSensorDistance > WALL_TRIGGER && theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
-				theRobot.oneTimer.set(200);
+				theRobot.oneTimer.set(200*TIMING_CONST);
 			}
       break;
 
 		#ifdef R2_LEFT	
 			case 13: //ROUND_A_BOUT -> ROUND_A_BOUT
 		#else // D2_RIGHT
-			case 14: //ROUND_A_BOUT -> ROUND_A_BOUT			
+			case 16: //ROUND_A_BOUT -> ROUND_A_BOUT			
 		#endif
 			if(theRobot.firstLineIndex != 3 && theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
@@ -311,7 +320,7 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT	
 			case 14: //ROUND_A_BOUT -> ROUND_A_BOUT
 		#else // D2_RIGHT
-			case 15: //ROUND_A_BOUT -> ROUND_A_BOUT			
+			case 17: //ROUND_A_BOUT -> ROUND_A_BOUT			
 		#endif
 			if(theRobot.firstLineIndex == 3 && theRobot.amountSeen > 1){
 				theRobot.currentState++;
@@ -323,14 +332,14 @@ void stateMachine::commonStates(Robot& theRobot){
 					digitalWrite(MC_AIN1, LOW);
 					digitalWrite(MC_AIN2, HIGH);
 			#else
-				case 16: //ROUND_A_BOUT -> LINE_FOLLOW
+				case 18: //ROUND_A_BOUT -> LINE_FOLLOW
 					digitalWrite(MC_BIN1, HIGH);
 					digitalWrite(MC_BIN2, LOW);
-				case 17: // LINE_FOLLOW_OFFSET -> RIGHT_TURN
+				case 19: // LINE_FOLLOW_OFFSET -> RIGHT_TURN
 			#endif
 			
 			if(!theRobot.oneTimer.isTimerSet()){ 
-				theRobot.oneTimer.set(200);
+				theRobot.oneTimer.set(60*TIMING_CONST);
 			}
 			else if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
@@ -341,7 +350,7 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT
 			case 16: // LEFT_TURN -> LINE_FOLLOW_OFFSET  
 		#else
-			case 18: // RIGHT_TURN -> LINE_FOLLOW_OFFSET
+			case 20: // RIGHT_TURN -> LINE_FOLLOW_OFFSET
 		#endif
 
 			if(!theRobot.oneTimer.isTimerSet()){
@@ -355,11 +364,11 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT
 			case 19: // GRAB_BARREL -> RIGHT_TURN
 		#else	//D2_RIGHT
-			case 21: // GRAB_BARREL -> LEFT_TURN
+			case 23: // GRAB_BARREL -> LEFT_TURN_SPIN
 		#endif
 			if(theRobot.amountSeen > 4) {
 				theRobot.currentState++; 
-				theRobot.oneTimer.set(150);
+				theRobot.oneTimer.set(100*TIMING_CONST);
 				theRobot.writeToServo(theRobot.ARM, ARM_UP);
 			}
 			break;
@@ -367,7 +376,9 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT
 			case 20: //RIGHT_TURN -> LINE_FOLLOW
 		#else //D2_RIGHT
-			case 22: //LEFT_TURN -> LINE_FOLLOW
+			case 24: //LEFT_TURN -> LINE_FOLLOW
+				digitalWrite(MC_BIN1, HIGH);
+				digitalWrite(MC_BIN2, LOW);
 		#endif
 			if(theRobot.firstLineIndex == 3 && theRobot.oneTimer.isTimeUpUnset()) {
 				theRobot.currentState++;
@@ -377,11 +388,12 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT
 			case 22:   //LINE_FOLLOW -> LINE_FOLLOW
 		#else
-			case 23:
+			case 25:
 		#endif
 			jiggleBox(theRobot);
+			theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
 			if(theRobot.wallSensorDistance > WALL_TRIGGER + 50){
-				theRobot.oneTimer.set(400);
+				theRobot.oneTimer.set(400 * TIMING_CONST);
 				theRobot.currentState++;
 			}
 			break;
@@ -389,7 +401,7 @@ void stateMachine::commonStates(Robot& theRobot){
 		#ifdef R2_LEFT
 			case 23:   //LINE_FOLLOW -> HANDLE_OBSTACLE
 		#else
-			case 24:
+			case 26:
 		#endif
 			if(theRobot.oneTimer.isTimeUp()){
 				theRobot.currentState++;
@@ -397,15 +409,15 @@ void stateMachine::commonStates(Robot& theRobot){
 			}
 			break;
 
-		case 27: //FIND_LINE -> LINE_FOLLOW
+		case 29: //FIND_LINE -> LINE_FOLLOW
 			theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
 			if(theRobot.amountSeen > 1){
 				theRobot.currentState++;
-				theRobot.oneTimer.set(500);
+				theRobot.oneTimer.set(500 * TIMING_CONST);
 			}
 			break;
 			
-		case 29:  // LINE_FOLLOW_OFFSET -> COME_HOME
+		case 31:  // LINE_FOLLOW_OFFSET -> COME_HOME
 			if(theRobot.amountSeen > 4){
 				theRobot.currentState++;
 				theRobot.oneTimer.unset();
@@ -413,7 +425,7 @@ void stateMachine::commonStates(Robot& theRobot){
 			break;
 			
 			
-		case 30: //COME_HOME -> DUMP_BARRELS
+		case 32: //COME_HOME -> DUMP_BARRELS
 			if(theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
 			}
@@ -442,7 +454,7 @@ void stateMachine::commonStates(Robot& theRobot){
 				case 24:  //WALL_FOLLOW -> WALL_FOLLOW_FAR
 					if(theRobot.amountSeen == 0){
 						theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
-						theRobot.oneTimer.set(500);  
+						theRobot.oneTimer.set(500 * TIMING_CONST);  
 						theRobot.currentState++;
 					}
 					break;
@@ -451,7 +463,7 @@ void stateMachine::commonStates(Robot& theRobot){
 					jiggleBox(theRobot);
 					if(theRobot.oneTimer.isTimeUp()){
 						theRobot.currentState++;
-						theRobot.oneTimer.set(3000);
+						theRobot.oneTimer.set(3000 * TIMING_CONST);
 					}
 					break;
 
@@ -459,7 +471,7 @@ void stateMachine::commonStates(Robot& theRobot){
 				case 26: //WALL_FOLLOW_FAR -> FIND_LINE
 					jiggleBox(theRobot);
 					if(theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUp()){
-						theRobot.oneTimer.set(2000);
+						theRobot.oneTimer.set(2000 * TIMING_CONST);
 					}
 					
 					if(theRobot.oneTimer.isTimeUpUnset()){
@@ -474,27 +486,39 @@ void stateMachine::commonStates(Robot& theRobot){
 		
 		void stateMachine::midStatesRightBot(Robot& theRobot){
 			switch (theRobot.currentState) {
-				case 1: //DEPART_SPAIN -> LINE_FOLLOW
+				case 1: //RIGHT_TURN -> LINE_FOLLOW
 			
 					if(theRobot.amountSeen > 1){
 						theRobot.currentState++;
 					}
 					break;
 				
-				case 2: //LINE_FOLLOW -> HANDLE_OBSTACLE
+				case 2: //LINE_FOLLOW -> LEFT_TURN
 					if(theRobot.amountSeen > 3){
 						theRobot.currentState++;
-						theRobot.oneTimer.set(3000);
+						theRobot.oneTimer.set(300 * TIMING_CONST);
 					}
 					break;
+
+				case 3: // LEFT_TURN -> LINE_FOLLOW
+					if(theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUpUnset()){
+						theRobot.currentState++;
+					}
+					break;
+
+				case 4: // LINE_FOLLOW -> HANDLE_OBSTACLE
+					if(theRobot.amountSeen > 3){
+						theRobot.currentState++;
+						theRobot.oneTimer.set(3000 * TIMING_CONST);
+					}
 					
-					case 25: // HANDLE_OBSTACLE -> HANDLE_OBSTACLE
+					case 27: // HANDLE_OBSTACLE -> HANDLE_OBSTACLE
 						if(theRobot.amountSeen > 4){
-							theRobot.oneTimer.set(1200);
+							theRobot.oneTimer.set(1200 * TIMING_CONST);
 							theRobot.currentState++;
 						}
 						break;
-					case 26: // HANDLE_OBSTACLE -> FIND_LINE
+					case 28: // HANDLE_OBSTACLE -> FIND_LINE
 						if(theRobot.oneTimer.isTimeUpUnset()){
 							theRobot.currentState++;
 						}
@@ -530,18 +554,34 @@ void stateMachine::writeToWheels(int leftSpeed, int rightSpeed) {
 void stateMachine::ejectBarrel(Robot& theRobot) {
 
   if(!theRobot.ejectTimer.isTimerSet()) {
-    theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME);
+			theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME);
   }
 
   if (theRobot.ejectTimer.isTimeUp()) {
-    theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
+    theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
   }
   else {
-    theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
+		theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
   }
 
 }
 
+void stateMachine::ejectCornerBarrel(Robot& theRobot) {
+
+  if(!theRobot.ejectTimer.isTimerSet()) {
+			theRobot.ejectTimer.set(30);
+  }
+
+  if (theRobot.ejectTimer.isTimeUpUnset() 
+			&& theRobot.ejectTimer.timeElapsed() < 40) {
+    theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
+		theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME);
+  }
+	else if(theRobot.ejectTimer.isTimeUpUnset()){
+		theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
+  }
+
+}
 
 /**
    grabBarrel method:
@@ -634,7 +674,7 @@ void stateMachine::resetRobot(Robot& theRobot){
   
   theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
   theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
-  theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
+  theRobot.writeToServo(theRobot.ARM, ARM_START);
   theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
 }
 
@@ -689,7 +729,7 @@ void stateMachine::accelerate(int zero, int sixty, int time){
   
   for(int i = 0; i < time/ACCELERATE_STEP_SIZE; i++){   
     currentSpeed = map(i, 0, time/ACCELERATE_STEP_SIZE, zero, sixty); 
-    writeToWheels(currentSpeed, currentSpeed);
+    writeToWheels(currentSpeed, 0);
     delay(ACCELERATE_STEP_SIZE);
   }  
 }
@@ -731,7 +771,7 @@ void stateMachine::jiggleBox(Robot& theRobot){
  */ 
 void stateMachine::comeHome(Robot& theRobot){
 	if(!theRobot.oneTimer.isTimerSet()){
-		theRobot.oneTimer.set(1100);
+		theRobot.oneTimer.set(1150);
 	}
 
 	float timeElapsed = (float)theRobot.oneTimer.timeElapsed();
@@ -746,7 +786,7 @@ void stateMachine::comeHome(Robot& theRobot){
 	float ratio = 0.0;
 	
 	if(timeElapsed < 390){//initial turn
-		ratio = timeElapsed/950 + 0.25;
+		ratio = timeElapsed/750 + 0.35;
 		ratio = (1 - ratio);
 		#ifdef R2_LEFT
 			writeToWheels(topSpeed, topSpeed * ratio);
@@ -755,7 +795,7 @@ void stateMachine::comeHome(Robot& theRobot){
 		#endif
 	}
 	else if(timeElapsed < 830){//opposite turn
-		ratio = (timeElapsed - 390)/1050 + 0.35;
+		ratio = (timeElapsed - 390)/850 + 0.45;
 		ratio = (1 - ratio);
 
 		#ifdef R2_LEFT
@@ -764,11 +804,9 @@ void stateMachine::comeHome(Robot& theRobot){
 			writeToWheels(topSpeed, topSpeed * ratio);
 		#endif
 	}
-	else{
-		writeToWheels(topSpeed, topSpeed);
-	}	
+	else{					
 
-		
+	}	
 }
 
 

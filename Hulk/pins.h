@@ -70,9 +70,9 @@
 		 * SERVO PINS
 		 */
 		#define DUMP_SERVO    PA8
-		#define EJECT_SERVO   PA10
+		#define EJECT_SERVO   PB6
 		#define ARM_SERVO     PA9
-		#define CLAW_SERVO    PB6
+		#define CLAW_SERVO    PA10
 
 
 		/**
@@ -126,9 +126,9 @@
 		 * SERVO PINS
 		 */
 		#define DUMP_SERVO    PA8
-		#define EJECT_SERVO   PA10
+		#define EJECT_SERVO   PB6
 		#define ARM_SERVO     PA9
-		#define CLAW_SERVO    PB6 
+		#define CLAW_SERVO    PA10 
     
 
 		/**
@@ -136,7 +136,7 @@
 		 */
 		 #define SENSOR_0     PA6
 		 #define SENSOR_1     PA7
-		 #define SENSOR_2     PB3
+		 #define SENSOR_2     PB9
 		 #define SENSOR_3     PA4
 		 #define SENSOR_4     PA5
 		 #define SENSOR_5     PA11

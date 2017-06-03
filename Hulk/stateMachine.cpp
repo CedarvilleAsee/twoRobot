@@ -103,6 +103,7 @@ void  stateMachine::execute(Robot& theRobot) {
 
     case HANDLE_OBSTACLE:
       wallFollow(theRobot, WALL_FOLLOW_CENTER);
+      grabBarrel(theRobot);
       break;
     
     case WALL_FOLLOW_FAR:
@@ -295,6 +296,7 @@ void stateMachine::commonStates(Robot& theRobot){
 				theRobot.currentState++;
 				theRobot.oneTimer.set(200);
 			}
+      break;
 
 		#ifdef R2_LEFT	
 			case 13: //ROUND_A_BOUT -> ROUND_A_BOUT
@@ -304,6 +306,7 @@ void stateMachine::commonStates(Robot& theRobot){
 			if(theRobot.firstLineIndex != 3 && theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
 			}
+      break;
 
 		#ifdef R2_LEFT	
 			case 14: //ROUND_A_BOUT -> ROUND_A_BOUT
@@ -313,6 +316,7 @@ void stateMachine::commonStates(Robot& theRobot){
 			if(theRobot.firstLineIndex == 3 && theRobot.amountSeen > 1){
 				theRobot.currentState++;
 			}
+     break;
 
 			#ifdef R2_LEFT
 				case 15:   //LINE_FOLLOW -> LEFT_TURN

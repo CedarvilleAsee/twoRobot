@@ -63,7 +63,6 @@ void  stateMachine::execute(Robot& theRobot) {
     case GRAB_CORNER_BARREL:
       grabBarrel(theRobot);
 			ejectCornerBarrel(theRobot);
-			
 		case FIND_CORNER_BARREL:
 				writeToWheels(FULL_SPEED*.5, FULL_SPEED*.5);
         jiggleBox(theRobot);
@@ -81,7 +80,7 @@ void  stateMachine::execute(Robot& theRobot) {
 				grabBarrel(theRobot);
 			#endif
 
-			ejectBarrel(theRobot);
+			ejectCornerBarrel(theRobot);
       break;
 	  
     case LEFT_TURN:
@@ -321,6 +320,7 @@ void stateMachine::commonStates(Robot& theRobot){
 			case 14: //ROUND_A_BOUT -> ROUND_A_BOUT
 		#else // D2_RIGHT
 			case 17: //ROUND_A_BOUT -> ROUND_A_BOUT			
+			theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
 		#endif
 			if(theRobot.firstLineIndex == 3 && theRobot.amountSeen > 1){
 				theRobot.currentState++;
@@ -569,16 +569,13 @@ void stateMachine::ejectBarrel(Robot& theRobot) {
 void stateMachine::ejectCornerBarrel(Robot& theRobot) {
 
   if(!theRobot.ejectTimer.isTimerSet()) {
-			theRobot.ejectTimer.set(30);
+			theRobot.ejectTimer.set(70);
   }
 
-  if (theRobot.ejectTimer.isTimeUpUnset() 
-			&& theRobot.ejectTimer.timeElapsed() < 40) {
+  if (theRobot.ejectTimer.timeElapsed() < 100 && 
+		theRobot.ejectTimer.isTimeUpUnset() ) {
     theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
-		theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME);
-  }
-	else if(theRobot.ejectTimer.isTimeUpUnset()){
-		theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
+		theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME-30);
   }
 
 }
@@ -786,7 +783,7 @@ void stateMachine::comeHome(Robot& theRobot){
 	float ratio = 0.0;
 	
 	if(timeElapsed < 390){//initial turn
-		ratio = timeElapsed/750 + 0.35;
+		ratio = timeElapsed/750 + 0.3;
 		ratio = (1 - ratio);
 		#ifdef R2_LEFT
 			writeToWheels(topSpeed, topSpeed * ratio);
@@ -795,7 +792,7 @@ void stateMachine::comeHome(Robot& theRobot){
 		#endif
 	}
 	else if(timeElapsed < 830){//opposite turn
-		ratio = (timeElapsed - 390)/850 + 0.45;
+		ratio = (timeElapsed - 390)/850 + 0.3;
 		ratio = (1 - ratio);
 
 		#ifdef R2_LEFT

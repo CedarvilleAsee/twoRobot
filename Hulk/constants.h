@@ -2,14 +2,14 @@
 #define CONSTANTS_H
 
 #ifndef R2_LEFT
-#define R2_LEFT 3
-	const int FULL_SPEED = 250;
+//#define R2_LEFT 3
+	//const int FULL_SPEED = 250;
 #endif
 
 
 #ifndef D2_RIGHT
-//#define D2_RIGHT 1
-//	const int FULL_SPEED = 150;
+#define D2_RIGHT 1
+	const int FULL_SPEED = 150;
 #endif
 
 	enum State {
@@ -65,7 +65,7 @@
 
 	#ifdef R2_LEFT
 		const float TIMING_CONST = 1.0;
-		const int EJECT_FRONT_POSITION = 87;
+		const int EJECT_FRONT_POSITION = 78;
 		const int EJECT_BACK_POSITION = 58;
 		const int CLAW_OPEN = 80;
 		const int CLAW_CLOSED = 42;  

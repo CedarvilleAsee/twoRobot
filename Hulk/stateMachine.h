@@ -37,7 +37,7 @@ namespace stateMachine{
 	#endif
   void ejectBarrel(Robot& theRobot);
   void ejectCornerBarrel(Robot& theRobot);
-  void lineFollow(Robot& theRobot, int offset = 0);
+  void lineFollow(Robot& theRobot, int offset, int fullSpeed = 150);
   void grabBarrel(Robot& theRobot);
   void handleObstacle(Robot& theRobot, int numLines);
   int getTurnIndex(Robot& theRobot);

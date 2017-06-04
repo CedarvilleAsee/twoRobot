@@ -20,14 +20,7 @@
 #ifndef PINS_H
 #define PINS_H
 
-#ifndef R2_LEFT
-//#define R2_LEFT 3
-#endif
 
-
-#ifndef D2_RIGHT
-#define D2_RIGHT 1
-#endif
 /**
 *   BUTTONS
 */
@@ -78,14 +71,14 @@
 		/**
 		 * SENSORS
 		 */
-		 #define SENSOR_0     PA5
-		 #define SENSOR_1     PA6
-		 #define SENSOR_2     PA7
-		 #define SENSOR_3     PA3
+		 #define SENSOR_0     PB11
+		 #define SENSOR_1     PB10
+		 #define SENSOR_2     PA11
+		 #define SENSOR_3     PA12
 		 #define SENSOR_4     PA15
-		 #define SENSOR_5     PB10
-		 #define SENSOR_6     PB11
-		 #define SENSOR_7     PA11
+		 #define SENSOR_5     PB3
+		 #define SENSOR_6     PA7
+		 #define SENSOR_7     PA6
 
 
 		#define WALL_SENSOR1  PA4

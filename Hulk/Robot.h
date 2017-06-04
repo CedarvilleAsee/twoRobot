@@ -49,6 +49,7 @@ public:
   int currentState;
 
   int firstLineIndex, lastLineIndex, amountSeen;
+  int pastFirstIndex, pastLastIndex, pastAmountSeen;
 
   int wallSensorDistance, clawSensorDistance, frontSensorDistance;
 

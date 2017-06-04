@@ -166,11 +166,19 @@ void readData(Robot& previousRobot) {
        previousRobot.amountSeen++;
     }
   }
-  
+  if(previousRobot.amountSeen == 0 && theRobot.currentState > 25){
+    previousRobot.amountSeen = previousRobot.pastAmountSeen;
+    previousRobot.firstLineIndex = previousRobot.pastFirstIndex;
+    previousRobot.lastLineIndex = previousRobot.pastLastIndex;
+  }
+
   //reading distance sensors
   previousRobot.frontSensorDistance = analogRead(FRONT_SENSOR);
   previousRobot.clawSensorDistance = analogRead(CLAW_SENSOR);
   previousRobot.wallSensorDistance = analogRead(WALL_SENSOR1);
+  previousRobot.pastAmountSeen = previousRobot.amountSeen;
+  previousRobot.pastFirstIndex = previousRobot.firstLineIndex;
+  previousRobot.pastLastIndex = previousRobot.lastLineIndex; 
  
 }
 

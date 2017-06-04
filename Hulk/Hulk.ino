@@ -86,7 +86,7 @@ void setup() {
   // Set the initial position of the Servo
   theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
   theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
-  theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
+  theRobot.writeToServo(theRobot.ARM, ARM_START);
   theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
   
   
@@ -120,10 +120,10 @@ void loop() {
   count++;
   // Send a debug message if the number of loops has exceeded 131
   if(count % 131 == 0){
-		//debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
-            //(theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
-    debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
-          (theRobot.amountSeen), theRobot.currentState % 10);
+		debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
+            (theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
+    //debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
+          //(theRobot.amountSeen), theRobot.currentState % 10);
    
   }
  

@@ -30,7 +30,6 @@ namespace stateMachine{
   
 	void commonStates(Robot& theRobot);
 	#ifdef R2_LEFT
-		void midStatesLeftBot(Robot& theRobot);
 		void endStateLeftBot(Robot& theRobot);
 	#else
 		void midStatesRightBot(Robot& theRobot);

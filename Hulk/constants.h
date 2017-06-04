@@ -2,14 +2,14 @@
 #define CONSTANTS_H
 
 #ifndef R2_LEFT
-//#define R2_LEFT 3
-	//const int FULL_SPEED = 150;
+#define R2_LEFT 3
+	const int FULL_SPEED = 150;
 #endif
 
 
 #ifndef D2_RIGHT
-#define D2_RIGHT 1
-	const int FULL_SPEED = 150;
+//#define D2_RIGHT 1
+	//const int FULL_SPEED = 150;
 #endif
 
 	enum State {
@@ -64,15 +64,17 @@
 	\******************************************/
 
 	#ifdef R2_LEFT
-		const float TIMING_CONST = 1.0;
+		const float TIMING_CONST = .833333;
 		const int EJECT_FRONT_POSITION = 88;
 		const int EJECT_BACK_POSITION = 58;
 		const int CLAW_OPEN = 80;
 		const int CLAW_CLOSED = 42;  
-		const int ARM_DOWN = 35;  
-		const int ARM_UP   = 150;  
-		const int DUMP_UP = 20;
-		const int DUMP_DOWN = 130;
+		const int ARM_DOWN = 130;  
+		const int ARM_UP   = 0;  
+		const int ARM_START = 25;
+		const int ARM_MID = 55;
+		const int DUMP_UP = 100;
+		const int DUMP_DOWN = 36;
 
 		//sensor trigger distances
 		const int CLAW_GRAB_TRIGGER_1_3	= 2500;

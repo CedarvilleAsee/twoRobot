@@ -3,7 +3,7 @@
 
 #ifndef R2_LEFT
 #define R2_LEFT 3
-	const int FULL_SPEED = 150;
+	const int FULL_SPEED = 140; // was 150
 #endif
 
 
@@ -64,16 +64,16 @@
 	\******************************************/
 
 	#ifdef R2_LEFT
-		const float TIMING_CONST = .833333;
+		const float TIMING_CONST = .9555555; // Old value .833333
 		const int EJECT_FRONT_POSITION = 88;
 		const int EJECT_BACK_POSITION = 58;
 		const int CLAW_OPEN = 80;
-		const int CLAW_CLOSED = 42;  
-		const int ARM_DOWN = 130;  
-		const int ARM_UP   = 0;  
+		const int CLAW_CLOSED = 38; // was 42 
+		const int ARM_DOWN = 155;  // was 130
+		const int ARM_UP   = 5;  
 		const int ARM_START = 25;
 		const int ARM_MID = 55;
-		const int DUMP_UP = 100;
+		const int DUMP_UP = 125;
 		const int DUMP_DOWN = 36;
 
 		//sensor trigger distances
@@ -81,6 +81,10 @@
 		const int CLAW_GRAB_TRIGGER_2  	= 2100;
 		const int WALL_TRIGGER          = 3550;
 		const int FRONT_CORNER_TRIGGER  = 2500;
+		
+		const int FRONT_HOME            = 3000;
+		const int WALL_HOME             = 3000;
+		
 		//wall following constants
 
 		const int WALL_FOLLOW_CENTER  	= 3650;
@@ -104,45 +108,48 @@
 		const int stateMap[] = {
 			WAIT,                 //start sequence
 			LEFT_TURN,
-			LINE_FOLLOW,
+			LINE_FOLLOW,          //2
 			RIGHT_TURN,
-			LINE_FOLLOW,     //4
+			LINE_FOLLOW,          //4
 
 			HANDLE_OBSTACLE,      //obstacle sequence
 			FIND_LINE,
 			LINE_FOLLOW_OFFSET2,   
 			LINE_FOLLOW_OFFSET,
-			EJECT_BARREL,          //first barrel eject/pickup
+			EJECT_BARREL,         //first barrel eject/pickup
 
 			GRAB_BARREL,           
-			LINE_FOLLOW_OFFSET,    // 9 counting lines
-			LINE_FOLLOW_OFFSET,    //
+			LINE_FOLLOW,   //11
+			LINE_FOLLOW_OFFSET,
 			FIND_CORNER_BARREL,   
-			GRAB_CORNER_BARREL,    //14
+			GRAB_CORNER_BARREL,   //14
 
 			ROUND_A_BOUT,         
 			ROUND_A_BOUT,
 			ROUND_A_BOUT,	
 			LINE_FOLLOW,  
-			LEFT_TURN,      //19
+			LEFT_TURN,            //19
 
-			LINE_FOLLOW_OFFSET,    //third barrel pickup/drop
+			LINE_FOLLOW_OFFSET,   //third barrel pickup/drop
 			EJECT_BARREL,          
-			GRAB_BARREL,           
-			RIGHT_TURN,     			
-			LINE_FOLLOW,    //24
-
+			GRAB_BARREL,                			
 			LINE_FOLLOW,
-			LINE_FOLLOW,
-			HANDLE_OBSTACLE,  
-			WALL_FOLLOW_FAR,   		
-			WALL_FOLLOW_FAR,   //29
+			RIGHT_TURN,		      //24
 
-			FIND_LINE,            
+			LINE_FOLLOW,          //25
+			LINE_FOLLOW,
+			HANDLE_OBSTACLE,      //27 
+			WALL_FOLLOW_FAR,
+
+			FIND_LINE,            //29 
 			LINE_FOLLOW,   
-			LINE_FOLLOW_OFFSET,   
-			COME_HOME,      
-			DUMP_BARRELS    //34    
+			LINE_FOLLOW_OFFSET,   //31
+			RIGHT_TURN,
+			LINE_FOLLOW,          //33
+			ROUND_A_BOUT, 
+			ROUND_A_BOUT,         //35
+			DEPART_SPAIN,
+			DUMP_BARRELS          //37
 		};
 
 	

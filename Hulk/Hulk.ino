@@ -5,7 +5,7 @@
  *    for the two Robot solution. All interaction with the arduino
  *    board is handled from here.
  *
- *    Authors: Nathan Herr, Daschel Fortner
+ *    Authors: Nathan Herr, Daschel Fortner, Spencer Graffunder :P
  *    Date:  1/20/16
  *      Modifications:
  *      - Added documentation: DTF
@@ -120,11 +120,10 @@ void loop() {
   count++;
   // Send a debug message if the number of loops has exceeded 131
   if(count % 131 == 0){
-		debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
-            (theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
-    //debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
-          //(theRobot.amountSeen), theRobot.currentState % 10);
-   
+	//	debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
+    //        (theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
+    debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
+          (theRobot.amountSeen), theRobot.currentState % 10);
   }
  
 }

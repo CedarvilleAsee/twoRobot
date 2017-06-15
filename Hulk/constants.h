@@ -86,7 +86,6 @@
 		const int WALL_HOME             = 3000;
 		
 		//wall following constants
-
 		const int WALL_FOLLOW_CENTER  	= 3650;
 		const int WALL_FOLLOW_CENTER_LEFT= 3740;
 		const int WALL_FOLLOW_CLOSE_GAIN= 180;  //too far right 
@@ -145,11 +144,11 @@
 			LINE_FOLLOW, 
 			LINE_FOLLOW_OFFSET,   //31
 			RIGHT_TURN,
-			LINE_FOLLOW,          //33
-			ROUND_A_BOUT, 
-			ROUND_A_BOUT,         //35
+			//LINE_FOLLOW,          //33
+			ROUND_A_BOUT,         //33
+			ROUND_A_BOUT,         //34
 			DEPART_SPAIN,
-			DUMP_BARRELS          //37
+			DUMP_BARRELS          //36
 		};
 
 	

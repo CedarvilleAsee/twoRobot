@@ -34,7 +34,12 @@ void  stateMachine::execute(Robot& theRobot) {
 			
 	case LINE_FOLLOW_OFFSET:
 		#ifdef R2_LEFT
-			lineFollow(theRobot, -2);
+			if (theRobot.currentState == 31) {
+				lineFollow(theRobot, -2, 100);
+			} else {
+				lineFollow(theRobot, -2);
+			}
+			
 		#else
 			lineFollow(theRobot, 2);
 		#endif			
@@ -162,10 +167,11 @@ void stateMachine::commonStates(Robot& theRobot){
 		case 0: // DEAD -> WAIT
             resetRobot(theRobot);
             if (digitalRead(GO_BUTTON) == LOW) {
+				//delay(1000);//to make recording easier. take out before competition
                 accelerate(0, FULL_SPEED, 300);
                 theRobot.writeToServo(theRobot.ARM, ARM_MID);
                 theRobot.currentState++;
-                //theRobot.currentState = 25; // 4 for just before lose line at hurricane
+                //theRobot.currentState = 13;
             }
             break;
 
@@ -557,30 +563,56 @@ void stateMachine::writeToWheels(int leftSpeed, int rightSpeed) {
 			-This method should be the same for both robots, assuming the constants are changed correctly
 */
 void stateMachine::ejectBarrel(Robot& theRobot) {
-
-  if(!theRobot.ejectTimer.isTimerSet()) {
+	
+	if(theRobot.currentState > 20 && theRobot.currentState < 30){
+	
+		if (!theRobot.preEjectTimer.isTimerSet()) {
+			theRobot.preEjectTimer.set(300);	
+		} else if (theRobot.preEjectTimer.isTimeUp()) {
+			if(!theRobot.ejectTimer.isTimerSet()) {
+				theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME);
+			}
+			if (theRobot.ejectTimer.isTimeUp()) {
+				theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
+			}
+			else {
+				theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
+			}
+		}
+	} else {
+		if(!theRobot.ejectTimer.isTimerSet()) {
 			theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME);
-  }
+		}
+		if (theRobot.ejectTimer.isTimeUp()) {
+			theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
+		}
+		else {
+			theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
+		}
+	}
 
-  if (theRobot.ejectTimer.isTimeUp()) {
-    theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
-  }
-  else {
+	if(!theRobot.ejectTimer.isTimerSet()) {
+		theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME);
+	}
+	if (theRobot.ejectTimer.isTimeUp()) {
+		theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
+	}
+	else {
 		theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
-  }
+	}
 
 }
 
 void stateMachine::ejectCornerBarrel(Robot& theRobot) {
 
-  if(!theRobot.ejectTimer.isTimerSet()) {
-			theRobot.ejectTimer.set(200);
-  }
-
-  if (theRobot.ejectTimer.isTimeUpUnset() ) {
-    theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
+	if (!theRobot.ejectTimer.isTimerSet()) {
+		theRobot.ejectTimer.set(400); // SG 6/14 changed from 200
+	}
+	
+	if (theRobot.ejectTimer.isTimeUpUnset()) {
+		theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
 		theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME);
-  }
+	}
 
 }
 
@@ -760,7 +792,7 @@ void stateMachine::jiggleBox(Robot& theRobot){
 			theRobot.jiggleTimer.set(JIGGLE_TIME_PERIOD);
 		}
 		else if(theRobot.jiggleTimer.timeElapsed() > JIGGLE_TIME_PERIOD/2){
-			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN - 15);
+			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN + 25);
 		}
 			
 }

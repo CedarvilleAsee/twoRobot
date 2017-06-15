@@ -142,7 +142,7 @@
 			WALL_FOLLOW_FAR,
 
 			FIND_LINE,            //29 
-			LINE_FOLLOW,   
+			LINE_FOLLOW, 
 			LINE_FOLLOW_OFFSET,   //31
 			RIGHT_TURN,
 			LINE_FOLLOW,          //33

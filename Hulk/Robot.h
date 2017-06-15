@@ -57,7 +57,8 @@ public:
   
   Timer oneTimer;
   Timer ejectTimer;
-	Timer jiggleTimer;
+  Timer preEjectTimer;
+  Timer jiggleTimer;
 
   Servo motors[4];
   

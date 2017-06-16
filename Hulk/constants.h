@@ -2,14 +2,14 @@
 #define CONSTANTS_H
 
 #ifndef R2_LEFT
-#define R2_LEFT 3
-	const int FULL_SPEED = 140; // was 150
+//#define R2_LEFT 3
+	//const int FULL_SPEED = 140; // was 150
 #endif
 
 
 #ifndef D2_RIGHT
-//#define D2_RIGHT 1
-	//const int FULL_SPEED = 150;
+#define D2_RIGHT 1
+	const int FULL_SPEED = 150;
 #endif
 
 	enum State {
@@ -168,8 +168,8 @@
 		const int ARM_UP 				= 140;  
 		const int ARM_START				= 110;
 		const int ARM_MID				= 70;
-		const int DUMP_UP 				= 100;
-		const int DUMP_DOWN 			= 15;
+		const int DUMP_UP 				= 85;
+		const int DUMP_DOWN 			= 10;
 
 		//spain wall following constants
 		const int WALL_F_FRONT_FAR_GAIN   = 370;

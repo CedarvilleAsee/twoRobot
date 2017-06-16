@@ -54,6 +54,10 @@ public:
   int wallSensorDistance, clawSensorDistance, frontSensorDistance;
 
   int grabTimerInt;
+
+  int startSensor;
+
+  bool isStartLightOn = false;
   
   Timer oneTimer;
   Timer ejectTimer;

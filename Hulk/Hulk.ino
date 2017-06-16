@@ -59,6 +59,8 @@ void setup() {
   pinMode(MC_BIN2, OUTPUT);
 
   pinMode(CLAW_SENSOR, INPUT);
+  
+  pinMode(START_SENSOR, INPUT);
    
   /*
    * The following output configurations set both motors 
@@ -122,8 +124,9 @@ void loop() {
   if(count % 131 == 0){
 		//debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
             //(theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
-    debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
-          (theRobot.amountSeen), theRobot.currentState % 10);
+    //debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
+          //(theRobot.amountSeen), theRobot.currentState % 10);
+    debugFourDigits(theRobot.startSensor);
    
   }
  
@@ -179,6 +182,9 @@ void readData(Robot& previousRobot) {
   previousRobot.pastAmountSeen = previousRobot.amountSeen;
   previousRobot.pastFirstIndex = previousRobot.firstLineIndex;
   previousRobot.pastLastIndex = previousRobot.lastLineIndex; 
+
+  //read start sensor
+  previousRobot.startSensor = analogRead(START_SENSOR);
  
 }
 
@@ -211,5 +217,11 @@ void debug(int indexZero, int indexOne, int indexTwo, int indexThree) {
   }
     
   display.sendDigits((char)message[0], (char)message[1], (char)message[2], (char)message[3], 0);
+}
+
+void debugFourDigits(int number){
+    if(number > -1 && number < 65535){
+        display.sendNum(number, '0');
+    }
 }
 

@@ -80,7 +80,6 @@
 		 #define SENSOR_6     PA7
 		 #define SENSOR_7     PA6
 
-
 		#define WALL_SENSOR1  PA4
 		#define CLAW_SENSOR   PA0
 		#define FRONT_SENSOR  PA2
@@ -139,6 +138,8 @@
 		#define WALL_SENSOR1  PA0
 		#define CLAW_SENSOR   PA1
 		#define FRONT_SENSOR  PA2
+		
+		#define START_SENSOR PA3
 
 		#define S_LED_ON     
 	

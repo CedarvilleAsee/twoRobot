@@ -168,7 +168,7 @@
 		const int ARM_UP 				= 140;  
 		const int ARM_START				= 110;
 		const int ARM_MID				= 70;
-		const int DUMP_UP 				= 85;
+		const int DUMP_UP 				= 95;
 		const int DUMP_DOWN 			= 10;
 
 		//spain wall following constants
@@ -192,7 +192,7 @@
 		const int ACCELERATE_STEP_SIZE = 	10;
 		const int KICKER_MOVE_BACK_TIME = 250 * TIMING_CONST;
 		const int COME_HOME_TIME 				= 2000 * TIMING_CONST;
-		const int JIGGLE_TIME_PERIOD		= 200;
+		const int JIGGLE_TIME_PERIOD		= 1500;
 
 		
 		const int stateMap[] = {

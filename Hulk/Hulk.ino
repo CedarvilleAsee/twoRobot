@@ -5,7 +5,7 @@
  *    for the two Robot solution. All interaction with the arduino
  *    board is handled from here.
  *
- *    Authors: Nathan Herr, Daschel Fortner
+ *    Authors: Nathan Herr, Daschel Fortner, Spencer Graffunder :P
  *    Date:  1/20/16
  *      Modifications:
  *      - Added documentation: DTF
@@ -47,6 +47,7 @@ void setup() {
   pinMode(SENSOR_7, INPUT);
   
   pinMode(GO_BUTTON, INPUT_PULLUP);
+  pinMode(START_LIGHT, OUTPUT);
 
   // Motor controller pins for the right motor
   pinMode(MC_PWMA, OUTPUT);
@@ -59,8 +60,6 @@ void setup() {
   pinMode(MC_BIN2, OUTPUT);
 
   pinMode(CLAW_SENSOR, INPUT);
-  
-  pinMode(START_SENSOR, INPUT);
    
   /*
    * The following output configurations set both motors 
@@ -88,7 +87,7 @@ void setup() {
   // Set the initial position of the Servo
   theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
   theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
-  theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
+  theRobot.writeToServo(theRobot.ARM, ARM_START);
   theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
   
   
@@ -122,11 +121,10 @@ void loop() {
   count++;
   // Send a debug message if the number of loops has exceeded 131
   if(count % 131 == 0){
-		debug(theRobot.wallSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
-            (theRobot.wallSensorDistance%100)/10, theRobot.currentState % 10);
-    //debug(theRobot.firstLineIndex, theRobot.lastLineIndex,(theRobot.amountSeen), theRobot.currentState % 10);
-    //debugFourDigits(theRobot.startSensor);
-   
+	//	debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
+    //        (theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
+    debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
+          (theRobot.amountSeen), theRobot.currentState % 10);
   }
  
 }
@@ -181,9 +179,6 @@ void readData(Robot& previousRobot) {
   previousRobot.pastAmountSeen = previousRobot.amountSeen;
   previousRobot.pastFirstIndex = previousRobot.firstLineIndex;
   previousRobot.pastLastIndex = previousRobot.lastLineIndex; 
-
-  //read start sensor
-  previousRobot.startSensor = analogRead(START_SENSOR);
  
 }
 
@@ -216,11 +211,5 @@ void debug(int indexZero, int indexOne, int indexTwo, int indexThree) {
   }
     
   display.sendDigits((char)message[0], (char)message[1], (char)message[2], (char)message[3], 0);
-}
-
-void debugFourDigits(int number){
-    if(number > -1 && number < 65535){
-        display.sendNum(number, '0');
-    }
 }
 

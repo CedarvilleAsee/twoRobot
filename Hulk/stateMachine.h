@@ -30,14 +30,13 @@ namespace stateMachine{
   
 	void commonStates(Robot& theRobot);
 	#ifdef R2_LEFT
-		void midStatesLeftBot(Robot& theRobot);
 		void endStateLeftBot(Robot& theRobot);
 	#else
 		void midStatesRightBot(Robot& theRobot);
 	#endif
   void ejectBarrel(Robot& theRobot);
   void ejectCornerBarrel(Robot& theRobot);
-  void lineFollow(Robot& theRobot, int offset, int fullSpeed = 150);
+  void lineFollow(Robot& theRobot, int offset, int fullSpeed = FULL_SPEED); // was fullSpeed = 150
   void grabBarrel(Robot& theRobot);
   void handleObstacle(Robot& theRobot, int numLines);
   int getTurnIndex(Robot& theRobot);

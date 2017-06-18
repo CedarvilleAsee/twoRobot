@@ -62,9 +62,9 @@
 		/**
 		 * SERVO PINS
 		 */
-		#define DUMP_SERVO    PA8
+		#define DUMP_SERVO    PA9
 		#define EJECT_SERVO   PB6
-		#define ARM_SERVO     PA9
+		#define ARM_SERVO     PA8
 		#define CLAW_SERVO    PA10
 
 
@@ -74,15 +74,18 @@
 		 #define SENSOR_0     PB11
 		 #define SENSOR_1     PB10
 		 #define SENSOR_2     PA11
-		 #define SENSOR_3     PA12
+		 #define SENSOR_3     PA5
 		 #define SENSOR_4     PA15
-		 #define SENSOR_5     PB3
+		 #define SENSOR_5     PA4
 		 #define SENSOR_6     PA7
 		 #define SENSOR_7     PA6
 
-		#define WALL_SENSOR1  PA4
-		#define CLAW_SENSOR   PA0
-		#define FRONT_SENSOR  PA2
+
+		#define WALL_SENSOR1  PA0
+		#define CLAW_SENSOR   PA2
+		#define FRONT_SENSOR  PA1
+
+		#define START_LIGHT   PB9
 
 		#define S_LED_ON     PA0
 	
@@ -138,8 +141,6 @@
 		#define WALL_SENSOR1  PA0
 		#define CLAW_SENSOR   PA1
 		#define FRONT_SENSOR  PA2
-		
-		#define START_SENSOR PA3
 
 		#define S_LED_ON     
 	

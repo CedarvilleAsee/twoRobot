@@ -2,14 +2,14 @@
 #define CONSTANTS_H
 
 #ifndef R2_LEFT
-//#define R2_LEFT 3
-	//const int FULL_SPEED = 140; // was 150
+#define R2_LEFT 3
+	const int FULL_SPEED = 140; // was 150
 #endif
 
 
 #ifndef D2_RIGHT
-#define D2_RIGHT 1
-	const int FULL_SPEED = 150;
+//#define D2_RIGHT 1
+	//const int FULL_SPEED = 150;
 #endif
 
 	enum State {
@@ -142,7 +142,7 @@
 			WALL_FOLLOW_FAR,
 
 			FIND_LINE,            //29 
-			LINE_FOLLOW,   
+			LINE_FOLLOW, 
 			LINE_FOLLOW_OFFSET,   //31
 			RIGHT_TURN,
 			LINE_FOLLOW,          //33
@@ -168,8 +168,8 @@
 		const int ARM_UP 				= 140;  
 		const int ARM_START				= 110;
 		const int ARM_MID				= 70;
-		const int DUMP_UP 				= 95;
-		const int DUMP_DOWN 			= 10;
+		const int DUMP_UP 				= 100;
+		const int DUMP_DOWN 			= 15;
 
 		//spain wall following constants
 		const int WALL_F_FRONT_FAR_GAIN   = 370;
@@ -192,7 +192,7 @@
 		const int ACCELERATE_STEP_SIZE = 	10;
 		const int KICKER_MOVE_BACK_TIME = 250 * TIMING_CONST;
 		const int COME_HOME_TIME 				= 2000 * TIMING_CONST;
-		const int JIGGLE_TIME_PERIOD		= 1500;
+		const int JIGGLE_TIME_PERIOD		= 200;
 
 		
 		const int stateMap[] = {

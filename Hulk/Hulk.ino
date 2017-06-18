@@ -1,7 +1,7 @@
 /*
  * TwoRobotMain.ino:
  *
- *     This class contains the main loop and the intitialization code 
+ *     This class contains the main loop and the intitialization code
  *    for the two Robot solution. All interaction with the arduino
  *    board is handled from here.
  *
@@ -9,7 +9,7 @@
  *    Date:  1/20/16
  *      Modifications:
  *      - Added documentation: DTF
- *      
+ *
  */
 #include <Servo.h>
 #include <Arduino.h>
@@ -23,10 +23,10 @@
 using namespace stateMachine;
 
 
-// The seven segment display 
+// The seven segment display
 Robot theRobot;   // A compilation of the Robot's data
 int count; //Integer value counting the number of iterations through the main loop.
-PT6961 display(DIN, CLOCK, CS);	
+PT6961 display(DIN, CLOCK, CS);
 
 
 /*
@@ -35,7 +35,7 @@ PT6961 display(DIN, CLOCK, CS);
 void setup() {
 
   display.initDisplay();
-  
+
   // Line sensor initialization
   pinMode(SENSOR_0, INPUT);
   pinMode(SENSOR_1, INPUT);
@@ -45,38 +45,40 @@ void setup() {
   pinMode(SENSOR_5, INPUT);
   pinMode(SENSOR_6, INPUT);
   pinMode(SENSOR_7, INPUT);
-  
+
   pinMode(GO_BUTTON, INPUT_PULLUP);
+
+  pinMode(START_LIGHT, OUTPUT);
 
   // Motor controller pins for the right motor
   pinMode(MC_PWMA, OUTPUT);
   pinMode(MC_AIN2, OUTPUT);
   pinMode(MC_AIN1, OUTPUT);
-  
+
   // Motor controller pins for the left motor
   pinMode(MC_PWMB, OUTPUT);
   pinMode(MC_BIN1, OUTPUT);
   pinMode(MC_BIN2, OUTPUT);
 
   pinMode(CLAW_SENSOR, INPUT);
-   
+
   /*
-   * The following output configurations set both motors 
+   * The following output configurations set both motors
    * to move forward. The two Robot solution doesn't require
    * backwards movement, so the wheels should be permanently
    * forward.
    *
-   * - Note: when the new boards are installed, this code will be 
+   * - Note: when the new boards are installed, this code will be
    * 	     changed because the board is going to tie these to high
    *  - Issues here the right wheel is only spinning backwards
    */
-   
+
   digitalWrite(MC_AIN1, LOW);
   digitalWrite(MC_AIN2, HIGH);
   digitalWrite(MC_BIN1, HIGH);
-  digitalWrite(MC_BIN2, LOW); 
+  digitalWrite(MC_BIN2, LOW);
 
-  
+
   // Attach the Robot's Servos to the Arduino pins
   theRobot.getServo(theRobot.EJECT).attach(EJECT_SERVO);   //this isn't working for some unknown reason
   theRobot.getServo(theRobot.ARM).attach(ARM_SERVO);       //the Robot class has been modified to make the
@@ -88,10 +90,10 @@ void setup() {
   theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
   theRobot.writeToServo(theRobot.ARM, ARM_START);
   theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
-  
-  
+
+
   theRobot.amountSeen = 0;
-  theRobot.firstLineIndex = 0; 
+  theRobot.firstLineIndex = 0;
   theRobot.lastLineIndex = 0;
   theRobot.clawSensorDistance = 0;
   count = 0;
@@ -99,7 +101,7 @@ void setup() {
 }
 
 /*
- * Executes the "thought process" of the Robot. 
+ * Executes the "thought process" of the Robot.
  * This is the main loop for the Robot's execution of the problem's states.
  */
 void loop() {
@@ -107,35 +109,33 @@ void loop() {
   // Refresh the Robot's data
   //theRobot = readData(theRobot);
 	readData(theRobot);
-	
+
   /*
-   * Check the current state's exit conditions and execute the action 
+   * Check the current state's exit conditions and execute the action
    * for the current state.
    */
-   
+
    stateMachine::updateState(theRobot);
    stateMachine::execute(theRobot);
 
- 
+
   count++;
   // Send a debug message if the number of loops has exceeded 131
   if(count % 131 == 0){
-	//	debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, 
-    //        (theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
-    debug(theRobot.firstLineIndex, theRobot.lastLineIndex,
-          (theRobot.amountSeen), theRobot.currentState % 10);
+		//debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, (theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
+    debug(theRobot.firstLineIndex, theRobot.lastLineIndex, (theRobot.amountSeen), theRobot.currentState % 10);
   }
- 
+
 }
 
 /*
- * Creates a new Robot object with current data, while preserving some 
- * from the previous Robot. Preserves the Robot's current state and 
+ * Creates a new Robot object with current data, while preserving some
+ * from the previous Robot. Preserves the Robot's current state and
  * Servo information.
  */
 void readData(Robot& previousRobot) {
   //Robot newRobot(previousRobot);
-  
+
   // Preserve necessary information
 
   // Reads in the line sensor data
@@ -155,13 +155,13 @@ void readData(Robot& previousRobot) {
   // Record the line sensor's data
   for(int i = 0; i < 8; i++) {
     if(lineData[i] == 1) {
-	
+
        previousRobot.lastLineIndex = i;
-        
+
        if(previousRobot.firstLineIndex == 9) {
           previousRobot.firstLineIndex = i;
        }
-	   
+
        previousRobot.amountSeen++;
     }
   }
@@ -177,12 +177,12 @@ void readData(Robot& previousRobot) {
   previousRobot.wallSensorDistance = analogRead(WALL_SENSOR1);
   previousRobot.pastAmountSeen = previousRobot.amountSeen;
   previousRobot.pastFirstIndex = previousRobot.firstLineIndex;
-  previousRobot.pastLastIndex = previousRobot.lastLineIndex; 
- 
+  previousRobot.pastLastIndex = previousRobot.lastLineIndex;
+
 }
 
 /*
- * Sends a message to the Seven Segment display. 
+ * Sends a message to the Seven Segment display.
  * To preserve a previous number, send -1 for that index of the display.
  * For example, after these lines of code:
  *
@@ -190,7 +190,7 @@ void readData(Robot& previousRobot) {
  *      debug(-1, 2, -1, -1);
  *
  * The Seven Segment will display these digits:
- * 
+ *
  * 		0 2 2 3
  */
 void debug(int indexZero, int indexOne, int indexTwo, int indexThree) {
@@ -208,7 +208,7 @@ void debug(int indexZero, int indexOne, int indexTwo, int indexThree) {
   if(indexThree != -1){
     message[3] = indexThree;
   }
-    
+
   display.sendDigits((char)message[0], (char)message[1], (char)message[2], (char)message[3], 0);
 }
 

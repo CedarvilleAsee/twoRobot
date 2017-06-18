@@ -84,6 +84,7 @@
 		#define WALL_SENSOR1  PA0
 		#define CLAW_SENSOR   PA2
 		#define FRONT_SENSOR  PA1
+		#define START_LIGHT   PB8
 
 		#define S_LED_ON     PA0
 	

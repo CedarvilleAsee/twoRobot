@@ -12,9 +12,9 @@ Robot::Robot() {
   frontSensorDistance = 0;
 
   grabTimerInt = 0;
-	Timer oneTimer;
-  Timer ejectTimer;
-	Timer jiggleTime;
+//	Timer oneTimer;
+//  Timer ejectTimer;
+//	Timer jiggleTime;
 }
 
 Robot::Robot(const Robot& previousRobot) {

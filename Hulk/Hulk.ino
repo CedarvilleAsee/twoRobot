@@ -122,7 +122,7 @@ void loop() {
   count++;
   // Send a debug message if the number of loops has exceeded 131
   if(count % 131 == 0){
-		//debug(theRobot.frontSensorDistance/1000, (theRobot.wallSensorDistance%1000)/ 100, (theRobot.frontSensorDistance%100)/10, theRobot.currentState % 10);
+		//debug(theRobot.rightSensorDistance/1000, (theRobot.leftSensorDistance%1000)/ 100, (theRobot.rightSensorDistance%100)/10, theRobot.currentState % 10);
     debug(theRobot.firstLineIndex, theRobot.lastLineIndex, (theRobot.amountSeen), theRobot.currentState % 10);
   }
 
@@ -172,9 +172,9 @@ void readData(Robot& previousRobot) {
   }
 
   //reading distance sensors
-  previousRobot.frontSensorDistance = analogRead(FRONT_SENSOR);
+  previousRobot.rightSensorDistance = analogRead(FRONT_SENSOR);
   previousRobot.clawSensorDistance = analogRead(CLAW_SENSOR);
-  previousRobot.wallSensorDistance = analogRead(WALL_SENSOR1);
+  previousRobot.leftSensorDistance = analogRead(WALL_SENSOR1);
   previousRobot.pastAmountSeen = previousRobot.amountSeen;
   previousRobot.pastFirstIndex = previousRobot.firstLineIndex;
   previousRobot.pastLastIndex = previousRobot.lastLineIndex;

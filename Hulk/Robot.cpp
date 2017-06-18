@@ -7,9 +7,9 @@ Robot::Robot() {
   lastLineIndex      = 9;
   amountSeen         = 0;
 
-  wallSensorDistance = 0;
+  leftSensorDistance = 0;
   clawSensorDistance = 0;
-  frontSensorDistance = 0;
+  rightSensorDistance = 0;
 
   grabTimerInt = 0;
 //	Timer oneTimer;

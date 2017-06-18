@@ -51,7 +51,7 @@ public:
   int firstLineIndex, lastLineIndex, amountSeen;
   int pastFirstIndex, pastLastIndex, pastAmountSeen;
 
-  int wallSensorDistance, clawSensorDistance, frontSensorDistance;
+  int leftSensorDistance, clawSensorDistance, rightSensorDistance;
 
   int grabTimerInt;
   

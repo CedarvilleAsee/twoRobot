@@ -75,8 +75,12 @@ void  stateMachine::execute(Robot& theRobot) {
         break;
 
     case LEFT_TURN:
-        writeToWheels(0, FULL_SPEED * 0.5);
-        break;
+		if(theRobot.currentState == 1){
+			writeToWheels(0, FULL_SPEED * 0.6);
+		} else {
+			writeToWheels(0, FULL_SPEED);
+        }
+		break;
 
 	case LEFT_TURN_SPIN:
 		digitalWrite(MC_BIN1, LOW);
@@ -98,12 +102,14 @@ void  stateMachine::execute(Robot& theRobot) {
       break;
 
     case HANDLE_OBSTACLE:
-        wallFollow(theRobot, WALL_FOLLOW_CENTER);
+		wallFollowLeft(theRobot.leftSensorDistance, WALL_FOLLOW_CENTER_LEFT);
+        //wallFollow(theRobot, WALL_FOLLOW_CENTER);
         grabBarrel(theRobot);
         break;
 
     case WALL_FOLLOW_FAR:
-        wallFollow(theRobot, WALL_FOLLOW_CENTER_LEFT);
+		wallFollowLeft(theRobot.leftSensorDistance, WALL_FOLLOW_CENTER_LEFT);
+        //wallFollow(theRobot, WALL_FOLLOW_CENTER_LEFT);
         break;
 
     case DUMP_BARRELS:
@@ -112,7 +118,8 @@ void  stateMachine::execute(Robot& theRobot) {
         break;
 
     case WALL_FOLLOW_RIGHT:
-        wallFollow(theRobot.frontSensorDistance, 2900);
+		wallFollowRight(theRobot.rightSensorDistance, 2900);
+        //wallFollow(theRobot.rightSensorDistance, 2900);
         break;
 
     case VEER_LEFT:
@@ -153,7 +160,7 @@ void stateMachine::commonStates(Robot& theRobot){
                 accelerate(0, FULL_SPEED, 300);
                 theRobot.writeToServo(theRobot.ARM, ARM_MID);
                 theRobot.currentState++;
-                //theRobot.currentState = 20;
+                //theRobot.currentState = 5;
             }
             break;
 
@@ -243,9 +250,9 @@ void stateMachine::commonStates(Robot& theRobot){
 			break;
 
 		case 8:  // LINE_FOLLOW_OFFSET
-			if(theRobot.wallSensorDistance < WALL_TRIGGER) {
+			if(theRobot.leftSensorDistance < WALL_TRIGGER) {
 				theRobot.currentState++;
-				theRobot.ejectTimer.set(150);
+				theRobot.ejectTimer.set(250);
 			}
 			break;
 
@@ -291,7 +298,7 @@ void stateMachine::commonStates(Robot& theRobot){
 			break;
 
 		case 14:  // GRAB_CORNER_BARREL
-			if(theRobot.frontSensorDistance < FRONT_CORNER_TRIGGER){
+			if(theRobot.rightSensorDistance < FRONT_CORNER_TRIGGER){
 				theRobot.oneTimer.set(300*TIMING_CONST);
 				theRobot.currentState++;
 			}
@@ -329,7 +336,7 @@ void stateMachine::commonStates(Robot& theRobot){
 				// SG 6/11 changed from 60 to avoid wheele advancing state
 				theRobot.oneTimer.set(500*TIMING_CONST);
 			}
-			else if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
+			if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
 				theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
 				theRobot.oneTimer.set(350*TIMING_CONST);
@@ -340,15 +347,13 @@ void stateMachine::commonStates(Robot& theRobot){
 			if(theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
 				theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
-				//theRobot.oneTimer.set(50);
+				theRobot.currentState++;
+				theRobot.ejectTimer.set(600);
 			}
 			break;
 
 		case 20: // LINE_FOLLOW_OFFSET
-			//if(theRobot.amountSeen > 1 && theRobot.oneTimer.isTimeUpUnset()) {
-				theRobot.currentState++;
-				theRobot.ejectTimer.set(600);
-			//}
+
 			break;
 		
 		case 21: // EJECT_BARREL
@@ -362,15 +367,15 @@ void stateMachine::commonStates(Robot& theRobot){
 		case 22: // GRAB_BARREL
 			if(theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
-				theRobot.oneTimer.set(100*TIMING_CONST);
+				//theRobot.oneTimer.set(100*TIMING_CONST);
 			}
 			break;
 
 		case 23: // ROUND_A_BOUT
 			if(!theRobot.turnTimer.isTimerSet()) {
-                theRobot.turnTimer.set(100);
+                theRobot.turnTimer.set(400);
             }
-            else if(theRobot.firstLineIndex == 3 && theRobot.turnTimer.isTimeUpUnset()) {
+            else if(theRobot.firstLineIndex > 1 && theRobot.firstLineIndex < 9 && theRobot.turnTimer.isTimeUpUnset()) {
                 theRobot.currentState++;
                 theRobot.turnTimer.set(500);
             }
@@ -392,14 +397,14 @@ void stateMachine::commonStates(Robot& theRobot){
 
 		case 26: // LINE_FOLLOW
             theRobot.writeToServo(theRobot.ARM, ARM_UP);
-            if(theRobot.frontSensorDistance < 3100){
+            if(theRobot.rightSensorDistance < 3100){
                 theRobot.currentState++;
             }
 			break;
 
 		case 27: // LINE_FOLLOW
             theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
-			if(theRobot.frontSensorDistance > 3500){
+			if(theRobot.rightSensorDistance > 3500){
                 theRobot.currentState++;
                 theRobot.oneTimer.set(500);
             }
@@ -603,27 +608,65 @@ void stateMachine::resetRobot(Robot& theRobot){
  * with either wall sensor.
  */
 void stateMachine::wallFollow(int sensorDistance, int center){
-  float ratio = 0.0;
-  if(sensorDistance < center){ //turn right
-	ratio = (center  - sensorDistance)/(float)WALL_FOLLOW_FAR_GAIN;
-    ratio = 1.0 - ratio;
-    if(ratio < 0.0){
-        ratio = 0.0;
-    }
-    writeToWheels(FULL_SPEED * ratio * 1.5, FULL_SPEED * 1.5);
-  }
-  else{ //turn left
-	ratio = (sensorDistance - center)/(float)WALL_FOLLOW_CLOSE_GAIN;
-    ratio = 1.0 - ratio;
-    if(ratio < 0.0){
-      ratio = 0.0;
-    }
-
+	float ratio = 0.0;
+	if(sensorDistance < center){ //turn right
+		ratio = (center  - sensorDistance)/(float)LEFT_WF_FAR_GAIN;
+		ratio = 1.0 - ratio;
+	if(ratio < 0.0){
+		ratio = 0.0;
+	}
+	writeToWheels(FULL_SPEED * ratio, FULL_SPEED);
+	} else { //turn left
+		ratio = (sensorDistance - center)/(float)LEFT_WF_CLOSE_GAIN;
+		ratio = 1.0 - ratio;
+		if(ratio < 0.0){
+		ratio = 0.0;
+	}
 	writeToWheels(FULL_SPEED, FULL_SPEED * ratio);
-
-  }
+	}
 }
 
+void stateMachine::wallFollowRight(int sensorDistance, int center){
+	float ratio = 0.0;
+	if(sensorDistance < center){ //too far. turn left
+		//ratio = (sensorDistance - center)/(float)LEFT_WF_FAR_GAIN;
+		ratio = (center - sensorDistance)/(float)RIGHT_WF_FAR_GAIN;
+		ratio = 1.0 - ratio;
+		if(ratio < 0.0){
+			ratio = 0.0;
+		}
+		writeToWheels(FULL_SPEED * ratio, FULL_SPEED);
+	} else { //too close. turn right
+		ratio = (sensorDistance - center)/(float)RIGHT_WF_CLOSE_GAIN;
+		//ratio = (center - sensorDistance)/(float)LEFT_WF_CLOSE_GAIN;
+		ratio = 1.0 - ratio;
+		if(ratio < 0.0){
+			ratio = 0.0;
+		}
+		writeToWheels(FULL_SPEED, FULL_SPEED * ratio);
+	}
+}
+
+void stateMachine::wallFollowLeft(int sensorDistance, int center){
+	float ratio = 0.0;
+	if(sensorDistance < center){ //too far. turn left
+		//ratio = (sensorDistance - center)/(float)LEFT_WF_FAR_GAIN;
+		ratio = (center - sensorDistance)/(float)LEFT_WF_FAR_GAIN;
+		ratio = 1.0 - ratio;
+		if(ratio < 0.0){
+			ratio = 0.0;
+		}
+		writeToWheels(FULL_SPEED, FULL_SPEED * ratio);
+	} else { //too close. turn right
+		ratio = (sensorDistance - center)/(float)LEFT_WF_CLOSE_GAIN;
+		//ratio = (center - sensorDistance)/(float)LEFT_WF_CLOSE_GAIN;
+		ratio = 1.0 - ratio;
+		if(ratio < 0.0){
+			ratio = 0.0;
+		}
+		writeToWheels(FULL_SPEED * ratio, FULL_SPEED);
+	}
+}
 
 /**
  * wallFollow method
@@ -633,8 +676,8 @@ void stateMachine::wallFollow(int sensorDistance, int center){
  */
 void stateMachine::wallFollow(Robot& theRobot, int center){
   float ratio = 0.0;
-  if(theRobot.wallSensorDistance < center){ //turn right
-    ratio = (center  - theRobot.wallSensorDistance)/WALL_FOLLOW_FAR_GAIN;
+  if(theRobot.leftSensorDistance < center){ //turn right
+    ratio = (center  - theRobot.leftSensorDistance)/LEFT_WF_FAR_GAIN;
     ratio = 1 - ratio;
     if(ratio < 0.0){
         ratio = 0.0;
@@ -647,7 +690,7 @@ void stateMachine::wallFollow(Robot& theRobot, int center){
     #endif
   }
   else{ //turn left
-    ratio = (theRobot.wallSensorDistance - center)/WALL_FOLLOW_CLOSE_GAIN;
+    ratio = (theRobot.leftSensorDistance - center)/LEFT_WF_CLOSE_GAIN;
     ratio = 1.0 - ratio;
     if(ratio < 0.0){
       ratio = 0.0;

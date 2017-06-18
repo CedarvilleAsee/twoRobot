@@ -30,13 +30,14 @@ namespace stateMachine{
   
 	void commonStates(Robot& theRobot);
 	#ifdef R2_LEFT
+		void midStatesLeftBot(Robot& theRobot);
 		void endStateLeftBot(Robot& theRobot);
 	#else
 		void midStatesRightBot(Robot& theRobot);
 	#endif
   void ejectBarrel(Robot& theRobot);
   void ejectCornerBarrel(Robot& theRobot);
-  void lineFollow(Robot& theRobot, int offset, int fullSpeed = FULL_SPEED); // was fullSpeed = 150
+  void lineFollow(Robot& theRobot, int offset, int fullSpeed = 150);
   void grabBarrel(Robot& theRobot);
   void handleObstacle(Robot& theRobot, int numLines);
   int getTurnIndex(Robot& theRobot);
@@ -44,6 +45,7 @@ namespace stateMachine{
   void wallFollow(Robot& theRobot, int center);
   void accelerate(int zero, int sixty, int time); 
   void jiggleBox(Robot& theRobot);
-	void comeHome(Robot& theRobot);
+  void wallFollowLeft(Robot& theRobot, int center);
+  void errorCheck(Robot& theRobot);
 }
 

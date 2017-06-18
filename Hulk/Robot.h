@@ -54,11 +54,15 @@ public:
   int wallSensorDistance, clawSensorDistance, frontSensorDistance;
 
   int grabTimerInt;
+
+  int startSensor;
+
+  bool isStartLightOn = false;
   
   Timer oneTimer;
   Timer ejectTimer;
-  Timer preEjectTimer;
-  Timer jiggleTimer;
+	Timer jiggleTimer;
+  Timer errorTimer;
 
   Servo motors[4];
   

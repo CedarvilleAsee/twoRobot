@@ -118,7 +118,7 @@
 		 * SERVO PINS
 		 */
 		#define DUMP_SERVO    PA8
-		#define EJECT_SERVO   PB6
+		#define EJECT_SERVO   PB7
 		#define ARM_SERVO     PA9
 		#define CLAW_SERVO    PA10 
     

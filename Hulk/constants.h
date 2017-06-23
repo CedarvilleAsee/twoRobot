@@ -31,9 +31,9 @@
 		WALL_FOLLOW_FAR    = 15,
 		COME_HOME		       = 16,
 		RIGHT_TURN_SPIN	   = 17,
-    WALL_FOLLOW_LEFT   = 18,
-    FIND_LINE_RIGHT    = 19,
-    ROUND_A_BOUT2      = 20
+		WALL_FOLLOW_LEFT   = 18,
+		FIND_LINE_RIGHT    = 19,
+		ROUND_A_BOUT2      = 20
 	};
 
 
@@ -42,9 +42,9 @@
     FULL_SPEED * .2,
     FULL_SPEED * .3,
     FULL_SPEED * .45,
-    FULL_SPEED * .55,
-    FULL_SPEED * .65,
-    FULL_SPEED * .8,  //6
+    FULL_SPEED * .6, // .55
+    FULL_SPEED * .7,  //.65
+    FULL_SPEED * .85,  //.8
     FULL_SPEED, FULL_SPEED, FULL_SPEED, FULL_SPEED, 
     FULL_SPEED, FULL_SPEED, FULL_SPEED, FULL_SPEED
   };
@@ -52,9 +52,9 @@
   const int LEFT_WHEEL_SPEEDS[15] = {
     FULL_SPEED, FULL_SPEED, FULL_SPEED, FULL_SPEED, 
     FULL_SPEED, FULL_SPEED, FULL_SPEED, FULL_SPEED, 
-    FULL_SPEED * .8, //8
-    FULL_SPEED * .65,
-    FULL_SPEED * .55,
+    FULL_SPEED * .85, //.8
+    FULL_SPEED * .7, //.65
+    FULL_SPEED * .6, //.55
     FULL_SPEED * .45,
     FULL_SPEED * .3,
     FULL_SPEED * .2,
@@ -79,21 +79,21 @@
   const int DUMP_DOWN 			= 10;
 
   //spain wall following constants
-  const int WALL_F_FRONT_FAR_GAIN   = 370;
-  const int WALL_F_FRONT_CLOSE_GAIN = 220;
+  const int WALL_F_FRONT_FAR_GAIN   = 320;
+  const int WALL_F_FRONT_CLOSE_GAIN = 270;
   const int WALL_F_FRONT_CENTER     = 2700;
 
   //sensor trigger distances
   const int CLAW_GRAB_TRIGGER_1_3	= 2500;
   const int CLAW_GRAB_TRIGGER_2  	= 2100;
   const int WALL_TRIGGER          = 3550;
-  const int FRONT_CORNER_TRIGGER  = 3300;
+  const int FRONT_CORNER_TRIGGER  = 3250;
 
   //wall following constants
   const int WALL_FOLLOW_CENTER  	= 3620;
   const int WALL_FOLLOW_CENTER_LEFT= 3700;
-  const int WALL_FOLLOW_CLOSE_GAIN= 180;  //too far right 
-  const int WALL_FOLLOW_FAR_GAIN  = 150;  //too far left 
+  const int WALL_FOLLOW_CLOSE_GAIN= 230;  //too far right 
+  const int WALL_FOLLOW_FAR_GAIN  = 200;  //too far left 
 
   //Timing constants
   const int ACCELERATE_STEP_SIZE = 	10;
@@ -118,7 +118,7 @@
     GRAB_BARREL,           
     LINE_FOLLOW_OFFSET,    // counting lines
     LINE_FOLLOW_OFFSET,   
-    FIND_CORNER_BARREL,   
+    FIND_CORNER_BARREL,
     GRAB_CORNER_BARREL, //14
     
     ROUND_A_BOUT,         
@@ -130,7 +130,7 @@
     RIGHT_TURN,    
     LINE_FOLLOW_OFFSET,    // third barrel pickup/drop
     EJECT_BARREL,      
-    GRAB_BARREL,      
+    GRAB_BARREL,    //23
     ROUND_A_BOUT2,  //24
     
     LINE_FOLLOW,

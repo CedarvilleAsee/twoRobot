@@ -3,7 +3,7 @@
 
 #ifndef R2_LEFT
 #define R2_LEFT 3
-	const int FULL_SPEED = 140; // was 150
+	const int FULL_SPEED = 150; // was 150
 #endif
 
 	enum State {
@@ -140,7 +140,7 @@
 		VEER_LEFT,         //31
 		LINE_FOLLOW,
 		LEFT_TURN,         //33
-		LINE_FOLLOW_OFFSET,
+		LINE_FOLLOW,
 		WAIT
 	};
 

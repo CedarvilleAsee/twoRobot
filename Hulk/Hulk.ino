@@ -1,6 +1,6 @@
 /*
  * TwoRobotMain.ino:
- *
+ *    FOR R2 (left)
  *     This class contains the main loop and the intitialization code
  *    for the two Robot solution. All interaction with the arduino
  *    board is handled from here.
@@ -22,12 +22,10 @@
 
 using namespace stateMachine;
 
-
 // The seven segment display
 Robot theRobot;   // A compilation of the Robot's data
 int count; //Integer value counting the number of iterations through the main loop.
 PT6961 display(DIN, CLOCK, CS);
-
 
 /*
  * Initializes all of the pins, and preps all of the hardware for use.

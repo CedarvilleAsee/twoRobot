@@ -12,123 +12,10 @@
     	- Removed soft PWM in stateMachine - NH 3/1/17
 		- We made it work DTF & NH 3/20 through 4/6
 */
+
 #include "stateMachine.h"
 #include "constants.h"
 #include "pins.h"
-/*
-   execute method:
-
-       The execute method performs the function for a state. The state is determined
-       by the theRobot's currentState field, which becomes the index of the stateMap
-       as defined in constants.h.
-
-       - theRobot: the data used to execute the current state
-*/
-void  stateMachine::execute(Robot& theRobot) {
-
-  switch (stateMap[theRobot.currentState]) {
-
-	case LINE_FOLLOW:
-
-        digitalWrite(MC_AIN1, LOW);
-        digitalWrite(MC_AIN2, HIGH);
-        digitalWrite(MC_BIN1, HIGH);
-        digitalWrite(MC_BIN2, LOW);
-
-		lineFollow(theRobot, 0);
-        break;
-
-	case WAIT:
-		writeToWheels(0, 0);
-		break;
-
-    case LINE_FOLLOW_OFFSET2:
-        lineFollow(theRobot, 2);
-        break;
-
-    case DEPART_SPAIN:
-		digitalWrite(MC_AIN1, LOW);
-		digitalWrite(MC_AIN2, HIGH);
-        writeToWheels(FULL_SPEED*.6, FULL_SPEED*.6);
-        break;
-
-    case GRAB_BARREL: //using fall through
-		grabBarrel(theRobot);
-	case EJECT_BARREL:
-		ejectBarrel(theRobot);
-	case LINE_FOLLOW_OFFSET:
-		lineFollow(theRobot, -2);
-        break;
-
-    case GRAB_CORNER_BARREL:
-        grabBarrel(theRobot);
-		ejectCornerBarrel(theRobot);
-	case FIND_CORNER_BARREL:
-		writeToWheels(FULL_SPEED*.5, FULL_SPEED*.5);
-        break;
-
-    case ROUND_A_BOUT:
-		digitalWrite(MC_AIN1, HIGH);
-		digitalWrite(MC_AIN2, LOW);
-		writeToWheels(FULL_SPEED * 0.5, FULL_SPEED * 0.5);
-		ejectCornerBarrel(theRobot);
-        break;
-
-    case LEFT_TURN:
-		if(theRobot.currentState == 1){
-			writeToWheels(0, FULL_SPEED * 0.6);
-		} else {
-			writeToWheels(0, FULL_SPEED);
-        }
-		break;
-
-	case LEFT_TURN_SPIN:
-		digitalWrite(MC_BIN1, LOW);
-		digitalWrite(MC_BIN2, HIGH);
-		writeToWheels(FULL_SPEED * .45, FULL_SPEED* .7);
-		break;
-
-    case RIGHT_TURN:
-        writeToWheels(FULL_SPEED, 0);
-        break;
-
-    case FIND_LINE:
-		#ifdef R2_LEFT
-			writeToWheels(FULL_SPEED, RIGHT_WHEEL_SPEEDS[5]);
-		#else
-			writeToWheels(LEFT_WHEEL_SPEEDS[9], FULL_SPEED);
-		#endif
-
-      break;
-
-    case HANDLE_OBSTACLE:
-		wallFollowLeft(theRobot.leftSensorDistance, WALL_FOLLOW_CENTER_LEFT);
-        //wallFollow(theRobot, WALL_FOLLOW_CENTER);
-        grabBarrel(theRobot);
-        break;
-
-    case WALL_FOLLOW_FAR:
-		wallFollowLeft(theRobot.leftSensorDistance, WALL_FOLLOW_CENTER_LEFT);
-        //wallFollow(theRobot, WALL_FOLLOW_CENTER_LEFT);
-        break;
-
-    case DUMP_BARRELS:
-        theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
-        writeToWheels(0, 0);
-        break;
-
-    case WALL_FOLLOW_RIGHT:
-		wallFollowRight(theRobot.rightSensorDistance, 2900);
-        //wallFollow(theRobot.rightSensorDistance, 2900);
-        break;
-
-    case VEER_LEFT:
-        writeToWheels(FULL_SPEED * 0.8, FULL_SPEED);
-        break;
-
-  }
-
-}
 
 /*
    updateState method:
@@ -159,8 +46,8 @@ void stateMachine::commonStates(Robot& theRobot){
 				//delay(1000);//to make recording easier. take out before competition
                 accelerate(0, FULL_SPEED, 300);
                 theRobot.writeToServo(theRobot.ARM, ARM_MID);
-                theRobot.currentState++;
-                //theRobot.currentState = 5;
+                //theRobot.currentState++;
+                theRobot.currentState = 35;
             }
             break;
 
@@ -348,7 +235,7 @@ void stateMachine::commonStates(Robot& theRobot){
 				theRobot.currentState++;
 				theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
 				theRobot.currentState++;
-				theRobot.ejectTimer.set(600);
+				theRobot.ejectTimer.set(400);
 			}
 			break;
 
@@ -375,7 +262,7 @@ void stateMachine::commonStates(Robot& theRobot){
 			if(!theRobot.turnTimer.isTimerSet()) {
                 theRobot.turnTimer.set(400);
             }
-            else if(theRobot.firstLineIndex > 1 && theRobot.firstLineIndex < 9 && theRobot.turnTimer.isTimeUpUnset()) {
+            else if(theRobot.firstLineIndex > 1 && theRobot.amountSeen > 1 && theRobot.turnTimer.isTimeUpUnset()) {
                 theRobot.currentState++;
                 theRobot.turnTimer.set(500);
             }
@@ -420,7 +307,7 @@ void stateMachine::commonStates(Robot& theRobot){
             if (theRobot.amountSeen > 2){
                 theRobot.currentState++;
                 //theRobot.oneTimer.unset();
-                theRobot.oneTimer.set(500);
+                theRobot.oneTimer.set(200);
             }
 			break;
 
@@ -433,11 +320,12 @@ void stateMachine::commonStates(Robot& theRobot){
         case 31: // VEER_LEFT
             if(theRobot.amountSeen > 1){
                 theRobot.currentState++;
+				theRobot.oneTimer.set(300);
             }
 			break;
 
 		case 32: // LINE_FOLLOW
-			if(theRobot.amountSeen > 3){
+			if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
 				theRobot.oneTimer.set(300);
 			}
@@ -457,17 +345,154 @@ void stateMachine::commonStates(Robot& theRobot){
 			break;
 
 		case 35: // WAIT
-			theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
+			theRobot.writeToServo(theRobot.ARM, ARM_MID);
+			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP - DUMP_DOWN) * 5 / 8 + DUMP_DOWN);
+			delay(500);
+			for(int i = (DUMP_UP - DUMP_DOWN) * 3 / 4 + DUMP_DOWN; i < DUMP_UP; i++){
+				theRobot.writeToServo(theRobot.DUMP, i);
+				delay(30);
+			}
+			delay(500);
+			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN * 3 / 4);
+			delay(500);
+			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP - DUMP_DOWN) * 3 / 4 + DUMP_DOWN);
+			/*theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 2);
+			delay(500);
+			theRobot.writeToServo(theRobot.DUMP, 5 * (DUMP_UP + DUMP_DOWN) / 8);
+			delay(500);
+			theRobot.writeToServo(theRobot.DUMP, 3 * (DUMP_UP + DUMP_DOWN) / 4);
+			delay(500);
+			theRobot.writeToServo(theRobot.DUMP, 7 * (DUMP_UP + DUMP_DOWN) / 8);
+			delay(500);
 			theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
 			delay(1000);
-			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
+			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 4);
 			delay(1000);
 			theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
-			delay(1000);
+			delay(1000);*/
 			theRobot.currentState = 0;
 			break;
 	}
 }	//end stateMachine::commonStates
+
+/*
+   execute method:
+
+       The execute method performs the function for a state. The state is determined
+       by the theRobot's currentState field, which becomes the index of the stateMap
+       as defined in constants.h.
+
+       - theRobot: the data used to execute the current state
+*/
+void  stateMachine::execute(Robot& theRobot) {
+
+  switch (stateMap[theRobot.currentState]) {
+
+	case LINE_FOLLOW:
+
+        digitalWrite(MC_AIN1, LOW);
+        digitalWrite(MC_AIN2, HIGH);
+        digitalWrite(MC_BIN1, HIGH);
+        digitalWrite(MC_BIN2, LOW);
+
+		lineFollow(theRobot, 0);
+        break;
+
+	case WAIT:
+		writeToWheels(0, 0);
+		break;
+
+    case LINE_FOLLOW_OFFSET2:
+        lineFollow(theRobot, 2);
+        break;
+
+    case DEPART_SPAIN:
+		digitalWrite(MC_AIN1, LOW);
+		digitalWrite(MC_AIN2, HIGH);
+        writeToWheels(FULL_SPEED*.6, FULL_SPEED*.6);
+        break;
+
+    case GRAB_BARREL: //using fall through
+		grabBarrel(theRobot);
+		if(theRobot.currentState == 22){
+			writeToWheels(0, 0);
+			break;
+		}
+	case EJECT_BARREL:
+		ejectBarrel(theRobot);
+	case LINE_FOLLOW_OFFSET:
+		lineFollow(theRobot, -2);
+        break;
+
+    case GRAB_CORNER_BARREL:
+        grabBarrel(theRobot);
+		ejectCornerBarrel(theRobot);
+	case FIND_CORNER_BARREL:
+		writeToWheels(FULL_SPEED*.5, FULL_SPEED*.5);
+        break;
+
+    case ROUND_A_BOUT:
+		digitalWrite(MC_AIN1, HIGH);
+		digitalWrite(MC_AIN2, LOW);
+		writeToWheels(FULL_SPEED * 0.5, FULL_SPEED * 0.5);
+		ejectCornerBarrel(theRobot);
+        break;
+
+    case LEFT_TURN:
+		if(theRobot.currentState == 1){
+			writeToWheels(0, FULL_SPEED * 0.6);
+		} else {
+			writeToWheels(0, FULL_SPEED);
+        }
+		break;
+
+	case LEFT_TURN_SPIN:
+		digitalWrite(MC_BIN1, LOW);
+		digitalWrite(MC_BIN2, HIGH);
+		writeToWheels(FULL_SPEED * .45, FULL_SPEED* .7);
+		break;
+
+    case RIGHT_TURN:
+        writeToWheels(FULL_SPEED, 0);
+        break;
+
+    case FIND_LINE:
+		#ifdef R2_LEFT
+			writeToWheels(FULL_SPEED, RIGHT_WHEEL_SPEEDS[5]);
+		#else
+			writeToWheels(LEFT_WHEEL_SPEEDS[9], FULL_SPEED);
+		#endif
+
+      break;
+
+    case HANDLE_OBSTACLE:
+		wallFollowLeft(theRobot.leftSensorDistance, WALL_FOLLOW_CENTER_LEFT);
+        //wallFollow(theRobot, WALL_FOLLOW_CENTER);
+        grabBarrel(theRobot);
+        break;
+
+    case WALL_FOLLOW_FAR:
+		wallFollowLeft(theRobot.leftSensorDistance, WALL_FOLLOW_CENTER_LEFT);
+        //wallFollow(theRobot, WALL_FOLLOW_CENTER_LEFT);
+        break;
+
+    case DUMP_BARRELS:
+        theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
+        writeToWheels(0, 0);
+        break;
+
+    case WALL_FOLLOW_RIGHT:
+		wallFollowRight(theRobot.rightSensorDistance, 2900);
+        //wallFollow(theRobot.rightSensorDistance, 2900);
+        break;
+
+    case VEER_LEFT:
+        writeToWheels(FULL_SPEED * 0.8, FULL_SPEED);
+        break;
+
+  }
+
+}
 
 /*
   writeToWheels method:
@@ -552,7 +577,7 @@ int stateMachine::getTurnIndex(Robot& theRobot){
 	else if(theRobot.amountSeen == 0){
 		finalIndex = 0;
 	}
-
+	
 	return finalIndex;
 }
 
@@ -573,7 +598,11 @@ void stateMachine::lineFollow(Robot& theRobot, int offset, int fullSpeed){
 	}else if(index > 14){
 		index = 14;
 	}
-	writeToWheels(LEFT_WHEEL_SPEEDS[index],	RIGHT_WHEEL_SPEEDS[index]);
+	if(theRobot.currentState == 4){
+		writeToWheels(LEFT_WHEEL_SPEEDS[index] * 1.4,	RIGHT_WHEEL_SPEEDS[index] * 1.4);
+	} else {
+		writeToWheels(LEFT_WHEEL_SPEEDS[index],	RIGHT_WHEEL_SPEEDS[index]);
+	}
 }
 
 /**
@@ -635,7 +664,7 @@ void stateMachine::wallFollowRight(int sensorDistance, int center){
 		if(ratio < 0.0){
 			ratio = 0.0;
 		}
-		writeToWheels(FULL_SPEED * ratio, FULL_SPEED);
+		writeToWheels(FULL_SPEED * ratio * 1.3, FULL_SPEED * 1.3);
 	} else { //too close. turn right
 		ratio = (sensorDistance - center)/(float)RIGHT_WF_CLOSE_GAIN;
 		//ratio = (center - sensorDistance)/(float)LEFT_WF_CLOSE_GAIN;
@@ -643,7 +672,7 @@ void stateMachine::wallFollowRight(int sensorDistance, int center){
 		if(ratio < 0.0){
 			ratio = 0.0;
 		}
-		writeToWheels(FULL_SPEED, FULL_SPEED * ratio);
+		writeToWheels(FULL_SPEED * 1.3, FULL_SPEED * ratio * 1.3);
 	}
 }
 

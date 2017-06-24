@@ -226,7 +226,7 @@ void stateMachine::commonStates(Robot& theRobot){
 	case 4: // LINE_FOLLOW
 		if(theRobot.amountSeen > 4){
 			theRobot.currentState++;
-			theRobot.oneTimer.set(2800 * TIMING_CONST);
+			theRobot.oneTimer.set(3100 * TIMING_CONST);
 		}
 		break;
 
@@ -404,11 +404,11 @@ void stateMachine::commonStates(Robot& theRobot){
       }
       break;
   
-    case 29: // FIND_LINE -> WALL_FOLLOW_LEFT
+    case 29: // FIND_LINE -> WALL_FOLLOW_LEFT  //not actually finding a line
       theRobot.writeToServo(theRobot.ARM, ARM_START - 10);
       if (theRobot.frontSensorDistance < 3400){
         theRobot.currentState++;
-        theRobot.oneTimer.set(2700 * TIMING_CONST);
+        theRobot.oneTimer.set(2900 * TIMING_CONST);
       }
       break;
         
@@ -436,7 +436,7 @@ void stateMachine::commonStates(Robot& theRobot){
     case 33: // RIGHT_TURN -> LINE_FOLLOW
         if(theRobot.firstLineIndex == 3 && theRobot.oneTimer.isTimeUpUnset()){
           theRobot.currentState++;
-          theRobot.oneTimer.set(500);
+          theRobot.oneTimer.set(570);
         }
         break; 
 
@@ -488,15 +488,15 @@ void stateMachine::ejectBarrel(Robot& theRobot) {
 		}
 	}else{
 		if(!theRobot.ejectTimer.isTimerSet()) {
-			theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME*1.5);
+			theRobot.ejectTimer.set(KICKER_MOVE_BACK_TIME*2);
 		}
 		else if (theRobot.ejectTimer.isTimeUp()){
 			theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
 		}
-		else if (theRobot.ejectTimer.timeElapsed() > KICKER_MOVE_BACK_TIME * .5) {
+		else if (theRobot.ejectTimer.timeElapsed() > KICKER_MOVE_BACK_TIME) {
 			theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
 		}
-		else if (theRobot.ejectTimer.timeElapsed() < KICKER_MOVE_BACK_TIME * .5) {
+		else if (theRobot.ejectTimer.timeElapsed() < KICKER_MOVE_BACK_TIME) {
 			theRobot.writeToServo(theRobot.EJECT, EJECT_BACK_POSITION);
 		}
 	}

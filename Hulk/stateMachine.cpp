@@ -46,8 +46,7 @@ void stateMachine::commonStates(Robot& theRobot){
 				//delay(1000);//to make recording easier. take out before competition
                 accelerate(0, FULL_SPEED, 300);
                 theRobot.writeToServo(theRobot.ARM, ARM_MID);
-                //theRobot.currentState++;
-                theRobot.currentState = 35;
+                theRobot.currentState++;
             }
             break;
 
@@ -355,21 +354,29 @@ void stateMachine::commonStates(Robot& theRobot){
 			delay(500);
 			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN * 3 / 4);
 			delay(500);
-			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP - DUMP_DOWN) * 3 / 4 + DUMP_DOWN);
-			/*theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 2);
+			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP - DUMP_DOWN) * 5 / 8 + DUMP_DOWN);
 			delay(500);
-			theRobot.writeToServo(theRobot.DUMP, 5 * (DUMP_UP + DUMP_DOWN) / 8);
+			for(int i = (DUMP_UP - DUMP_DOWN) * 3 / 4 + DUMP_DOWN; i < DUMP_UP; i++){
+				theRobot.writeToServo(theRobot.DUMP, i);
+				delay(30);
+			}
+			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 2);
 			delay(500);
-			theRobot.writeToServo(theRobot.DUMP, 3 * (DUMP_UP + DUMP_DOWN) / 4);
-			delay(500);
-			theRobot.writeToServo(theRobot.DUMP, 7 * (DUMP_UP + DUMP_DOWN) / 8);
-			delay(500);
-			theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
-			delay(1000);
-			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 4);
-			delay(1000);
-			theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
-			delay(1000);*/
+      while(true) {
+        theRobot.writeToServo(theRobot.DUMP, 5 * (DUMP_UP + DUMP_DOWN) / 8);
+        delay(500);
+        theRobot.writeToServo(theRobot.DUMP, 3 * (DUMP_UP + DUMP_DOWN) / 4);
+        delay(500);
+        theRobot.writeToServo(theRobot.DUMP, 7 * (DUMP_UP + DUMP_DOWN) / 8);
+        delay(500);
+        theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
+        delay(1000);
+        theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 4);
+        delay(1000);
+        theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
+        delay(1000);
+      }
+			
 			theRobot.currentState = 0;
 			break;
 	}
@@ -522,7 +529,7 @@ void stateMachine::ejectBarrel(Robot& theRobot) {
 void stateMachine::ejectCornerBarrel(Robot& theRobot) {
 
 	if (!theRobot.ejectTimer.isTimerSet()) {
-		theRobot.ejectTimer.set(400); // SG 6/14 changed from 200
+		theRobot.ejectTimer.set(500); // SG 6/14 changed from 200
 	}
 	if (theRobot.ejectTimer.isTimeUpUnset()) {
 		theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);

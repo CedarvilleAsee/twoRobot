@@ -120,8 +120,8 @@ void loop() {
   count++;
   // Send a debug message if the number of loops has exceeded 131
   if(count % 131 == 0){
-		//debug(theRobot.rightSensorDistance/1000, (theRobot.leftSensorDistance%1000)/ 100, (theRobot.rightSensorDistance%100)/10, theRobot.currentState % 10);
-    debug(theRobot.firstLineIndex, theRobot.lastLineIndex, (theRobot.amountSeen), theRobot.currentState % 10);
+		debug(theRobot.clawSensorDistance/1000, (theRobot.clawSensorDistance%1000)/ 100, (theRobot.clawSensorDistance%100)/10, theRobot.currentState % 10);
+    //debug(theRobot.firstLineIndex, theRobot.lastLineIndex, (theRobot.amountSeen), theRobot.currentState % 10);
   }
 
 }

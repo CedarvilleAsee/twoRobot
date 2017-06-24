@@ -129,40 +129,37 @@ void  stateMachine::execute(Robot& theRobot) {
       
 
     case DUMP_BARRELS:
-		writeToWheels(0, 0);
-		//theRobot.writeToServo(theRobot.ARM, ARM_MID);
-		//theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
-		
+		writeToWheels(0, 0);		
 		theRobot.writeToServo(theRobot.ARM, ARM_MID);
 		if(theRobot.dumpPosition == 700 && theRobot.dumpTimer < millis()){
 			theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
 			delay(500);
 			theRobot.currentState = 0;
 		}
-	
-	    //just starting to dump
-        if(theRobot.dumpTimer == 0){
-			theRobot.writeToServo(theRobot.DUMP, 6.0/8.0*(float)(DUMP_UP-DUMP_DOWN)+DUMP_DOWN);
-			theRobot.dumpPosition = 6.0/8.0*(float)(DUMP_UP-DUMP_DOWN)+DUMP_DOWN;
-			theRobot.dumpTimer = millis() + 400;
-		}
-		//already dumped all the way
-		if(theRobot.dumpPosition == DUMP_UP && theRobot.dumpTimer < millis()){
-			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
-			theRobot.dumpTimer = millis() + 700;
-			theRobot.dumpPosition = 700;
-			
-		//need to dump a little more
-		}else if(theRobot.dumpTimer < millis()){
-			theRobot.dumpPosition += 1;
-			theRobot.dumpTimer = millis()+ 40;
-			theRobot.writeToServo(theRobot.DUMP, theRobot.dumpPosition);
-			
-			//wait for barrels to roll out
-			if(theRobot.dumpPosition == DUMP_UP){
-				theRobot.dumpTimer = millis() + 700;
-			}
-		}
+      //just starting to dump
+      if(theRobot.dumpTimer == 0){
+        theRobot.writeToServo(theRobot.DUMP, 6.0/8.0*(float)(DUMP_UP-DUMP_DOWN)+DUMP_DOWN);
+        theRobot.dumpPosition = 6.0/8.0*(float)(DUMP_UP-DUMP_DOWN)+DUMP_DOWN; 
+        theRobot.dumpTimer = millis() + 400;
+      }
+      //already dumped all the way
+      if(theRobot.dumpPosition == DUMP_UP && theRobot.dumpTimer < millis()){
+        theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
+        theRobot.dumpTimer = millis() + 700;
+        theRobot.dumpPosition = 700;
+        
+      //need to dump a little more
+      }else if(theRobot.dumpTimer < millis()){
+        theRobot.dumpPosition += 1;
+        theRobot.dumpTimer = millis()+ 40;
+        theRobot.writeToServo(theRobot.DUMP, theRobot.dumpPosition);
+        
+        //wait for barrels to roll out
+        if(theRobot.dumpPosition == DUMP_UP){
+          theRobot.dumpTimer = millis() + 700;
+        }
+      }
+	    
 		break;
 	}
 }
@@ -198,8 +195,8 @@ void stateMachine::commonStates(Robot& theRobot){
             
             accelerate(0, FULL_SPEED, 300);
             theRobot.writeToServo(theRobot.ARM, ARM_MID);
-            theRobot.currentState++;  //=9 to start from just after first pickup
-			//theRobot.currentState = 35;
+            //theRobot.currentState++;  //=9 to start from just after first pickup
+			theRobot.currentState = 35;
             theRobot.isStartLightOn = false;
         }
         break;

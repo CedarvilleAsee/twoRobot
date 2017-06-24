@@ -54,6 +54,8 @@ public:
   int wallSensorDistance, clawSensorDistance, frontSensorDistance;
 
   int grabTimerInt;
+  
+  int dumpPosition, dumpTimer;
 
   int startSensor;
 

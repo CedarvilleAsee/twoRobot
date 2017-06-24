@@ -75,7 +75,7 @@
   const int ARM_UP 				= 140;  
   const int ARM_START				= 110;
   const int ARM_MID				= 70;
-  const int DUMP_UP 				= 95;
+  const int DUMP_UP 				= 92;
   const int DUMP_DOWN 			= 10;
 
   //spain wall following constants
@@ -91,9 +91,9 @@
 
   //wall following constants
   const int WALL_FOLLOW_CENTER  	= 3620;
-  const int WALL_FOLLOW_CENTER_LEFT= 3700;
-  const int WALL_FOLLOW_CLOSE_GAIN= 230;  //too far right 
-  const int WALL_FOLLOW_FAR_GAIN  = 200;  //too far left 
+  const int WALL_FOLLOW_CENTER_LEFT = 3750;
+  const int WALL_FOLLOW_CLOSE_GAIN  = 230;  //too far right 
+  const int WALL_FOLLOW_FAR_GAIN    = 200;  //too far left 
 
   //Timing constants
   const int ACCELERATE_STEP_SIZE = 	10;

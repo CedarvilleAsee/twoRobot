@@ -109,6 +109,10 @@ void  stateMachine::execute(Robot& theRobot) {
     case FIND_LINE:
       writeToWheels(LEFT_WHEEL_SPEEDS[9], FULL_SPEED);
       break;
+	  
+	case FIND_LINE_RIGHT:
+      writeToWheels(FULL_SPEED, RIGHT_WHEEL_SPEEDS[4]);
+      break;
 
     case HANDLE_OBSTACLE:
       wallFollow(theRobot, WALL_FOLLOW_CENTER);
@@ -116,7 +120,7 @@ void  stateMachine::execute(Robot& theRobot) {
       break;
     
     case WALL_FOLLOW_LEFT: 
-      wallFollowLeft(theRobot, WALL_FOLLOW_CENTER);
+      wallFollowLeft(theRobot, WALL_FOLLOW_CENTER_LEFT);
       break;
       
     case WALL_FOLLOW_FAR: 
@@ -126,29 +130,41 @@ void  stateMachine::execute(Robot& theRobot) {
 
     case DUMP_BARRELS:
 		writeToWheels(0, 0);
+		//theRobot.writeToServo(theRobot.ARM, ARM_MID);
+		//theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
 		
-		theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
-		theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 2);
-		delay(500);
-		theRobot.writeToServo(theRobot.DUMP, 5 * (DUMP_UP + DUMP_DOWN) / 8);
-		delay(500);
-		theRobot.writeToServo(theRobot.DUMP, 3 * (DUMP_UP + DUMP_DOWN) / 4);
-		delay(500);
-		theRobot.writeToServo(theRobot.DUMP, 7 * (DUMP_UP + DUMP_DOWN) / 8);
-		delay(500);
-		theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
-		delay(1000);
-		theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 4);
-		delay(1000);
-		theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
-		delay(1000);
-		theRobot.currentState = 0;
+		theRobot.writeToServo(theRobot.ARM, ARM_MID);
+		if(theRobot.dumpPosition == 700 && theRobot.dumpTimer < millis()){
+			theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
+			delay(500);
+			theRobot.currentState = 0;
+		}
+	
+	    //just starting to dump
+        if(theRobot.dumpTimer == 0){
+			theRobot.writeToServo(theRobot.DUMP, 6.0/8.0*(float)(DUMP_UP-DUMP_DOWN)+DUMP_DOWN);
+			theRobot.dumpPosition = 6.0/8.0*(float)(DUMP_UP-DUMP_DOWN)+DUMP_DOWN;
+			theRobot.dumpTimer = millis() + 400;
+		}
+		//already dumped all the way
+		if(theRobot.dumpPosition == DUMP_UP && theRobot.dumpTimer < millis()){
+			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
+			theRobot.dumpTimer = millis() + 700;
+			theRobot.dumpPosition = 700;
+			
+		//need to dump a little more
+		}else if(theRobot.dumpTimer < millis()){
+			theRobot.dumpPosition += 1;
+			theRobot.dumpTimer = millis()+ 40;
+			theRobot.writeToServo(theRobot.DUMP, theRobot.dumpPosition);
+			
+			//wait for barrels to roll out
+			if(theRobot.dumpPosition == DUMP_UP){
+				theRobot.dumpTimer = millis() + 700;
+			}
+		}
 		break;
-     
-    case FIND_LINE_RIGHT: 
-      writeToWheels(FULL_SPEED, RIGHT_WHEEL_SPEEDS[5]);
-      break;
-  }
+	}
 }
 
 /*
@@ -183,6 +199,7 @@ void stateMachine::commonStates(Robot& theRobot){
             accelerate(0, FULL_SPEED, 300);
             theRobot.writeToServo(theRobot.ARM, ARM_MID);
             theRobot.currentState++;  //=9 to start from just after first pickup
+			//theRobot.currentState = 35;
             theRobot.isStartLightOn = false;
         }
         break;
@@ -391,7 +408,7 @@ void stateMachine::commonStates(Robot& theRobot){
       theRobot.writeToServo(theRobot.ARM, ARM_START - 10);
       if (theRobot.frontSensorDistance < 3400){
         theRobot.currentState++;
-        theRobot.oneTimer.set(3100 * TIMING_CONST);
+        theRobot.oneTimer.set(2700 * TIMING_CONST);
       }
       break;
         
@@ -585,6 +602,9 @@ void stateMachine::resetRobot(Robot& theRobot){
     theRobot.oneTimer.unset();
     theRobot.errorTimer.unset();
     
+	theRobot.dumpTimer = 0;
+	theRobot.dumpPosition = DUMP_DOWN;
+	
     writeToWheels(0,0);
     digitalWrite(MC_AIN1, LOW);
     digitalWrite(MC_AIN2, HIGH);

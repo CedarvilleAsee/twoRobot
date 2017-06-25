@@ -346,7 +346,7 @@ void stateMachine::commonStates(Robot& theRobot){
 		case 35: // WAIT
 			theRobot.writeToServo(theRobot.ARM, ARM_MID);
 			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP - DUMP_DOWN) * 5 / 8 + DUMP_DOWN);
-			delay(500);
+			delay(470);
 			for(int i = (DUMP_UP - DUMP_DOWN) * 3 / 4 + DUMP_DOWN; i < DUMP_UP; i++){
 				theRobot.writeToServo(theRobot.DUMP, i);
 				delay(30);

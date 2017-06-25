@@ -73,8 +73,8 @@
 	const int DUMP_DOWN = 40;
 
 	//sensor trigger distances
-	const int CLAW_GRAB_TRIGGER_1_3	= 2500;
-	const int CLAW_GRAB_TRIGGER_2  	= 2100;
+	const int CLAW_GRAB_TRIGGER_1_3	= 2700;
+	const int CLAW_GRAB_TRIGGER_2  	= 2600;
 	const int WALL_TRIGGER          = 3750; //was 3550
 	const int FRONT_CORNER_TRIGGER  = 2500;
 

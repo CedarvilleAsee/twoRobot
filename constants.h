@@ -69,14 +69,14 @@
 	const int ARM_UP   = 5;
 	const int ARM_START = 25;
 	const int ARM_MID = 55;
-	const int DUMP_UP = 130;
+	const int DUMP_UP = 125;
 	const int DUMP_DOWN = 40;
 
 	//sensor trigger distances
-	const int CLAW_GRAB_TRIGGER_1_3	= 2900;
-	const int CLAW_GRAB_TRIGGER_2  	= 2800;
+	const int CLAW_GRAB_TRIGGER_1_3	= 2700;
+	const int CLAW_GRAB_TRIGGER_2  	= 2600;
 	const int WALL_TRIGGER          = 3750; //was 3550
-	const int FRONT_CORNER_TRIGGER  = 3300;
+	const int FRONT_CORNER_TRIGGER  = 2500;
 
 	const int FRONT_HOME            = 3000;
 	const int WALL_HOME             = 3200; // was 3000
@@ -121,7 +121,7 @@
 
 		ROUND_A_BOUT,
 		ROUND_A_BOUT,
-		LINE_FOLLOW,
+		ROUND_A_BOUT,
 		LINE_FOLLOW,
 		LEFT_TURN,            //19
 
@@ -141,7 +141,7 @@
 		LINE_FOLLOW,
 		LEFT_TURN,         //33
 		LINE_FOLLOW,
-		DUMP_BARRELS
+		WAIT
 	};
 
 #endif

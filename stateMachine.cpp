@@ -44,10 +44,9 @@ void stateMachine::commonStates(Robot& theRobot){
 			digitalWrite(START_LIGHT, HIGH);
             if (digitalRead(GO_BUTTON) == LOW) {
 				//delay(1000);//to make recording easier. take out before competition
-                //accelerate(0, FULL_SPEED, 300);
+                accelerate(0, FULL_SPEED, 300);
                 theRobot.writeToServo(theRobot.ARM, ARM_MID);
                 theRobot.currentState++;
-                //theRobot.currentState = 35;
             }
             break;
 
@@ -201,12 +200,11 @@ void stateMachine::commonStates(Robot& theRobot){
 		case 16: // ROUND_A_BOUT
 			if(theRobot.firstLineIndex == 3 && theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
-				theRobot.oneTimer.set(200);
 			}
             break;
 
-		case 17: // LINE_FOLLOW
-			if(theRobot.oneTimer.isTimeUpUnset()){
+		case 17: // ROUND_A_BOUT
+			if(theRobot.firstLineIndex == 3 && theRobot.amountSeen > 1){
 				theRobot.currentState++;
 			}
             break;
@@ -222,7 +220,7 @@ void stateMachine::commonStates(Robot& theRobot){
 			theRobot.writeToServo(theRobot.CLAW, CLAW_OPEN);
 			if(!theRobot.oneTimer.isTimerSet()){
 				// SG 6/11 changed from 60 to avoid wheele advancing state
-				theRobot.oneTimer.set(200*TIMING_CONST);
+				theRobot.oneTimer.set(500*TIMING_CONST);
 			}
 			if(theRobot.amountSeen > 3 && theRobot.oneTimer.isTimeUpUnset()){
 				theRobot.currentState++;
@@ -236,7 +234,7 @@ void stateMachine::commonStates(Robot& theRobot){
 				theRobot.currentState++;
 				theRobot.writeToServo(theRobot.ARM, ARM_DOWN);
 				theRobot.currentState++;
-				theRobot.ejectTimer.set(500);
+				theRobot.ejectTimer.set(400);
 			}
 			break;
 
@@ -301,12 +299,11 @@ void stateMachine::commonStates(Robot& theRobot){
 		case 28: // LINE_FOLLOW
 			if (theRobot.oneTimer.isTimeUpUnset()){
                 theRobot.currentState++;
-				theRobot.oneTimer.set(200);
             }
 			break;
 
         case 29: // WALL_FOLLOW_RIGHT
-            if (theRobot.amountSeen > 2 && theRobot.oneTimer.isTimeUpUnset()){
+            if (theRobot.amountSeen > 2){
                 theRobot.currentState++;
                 //theRobot.oneTimer.unset();
                 theRobot.oneTimer.set(200);
@@ -346,8 +343,41 @@ void stateMachine::commonStates(Robot& theRobot){
 			}
 			break;
 
-		case 35: // DUMP_BARRELS
+		case 35: // WAIT
+			theRobot.writeToServo(theRobot.ARM, ARM_MID);
+			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP - DUMP_DOWN) * 5 / 8 + DUMP_DOWN);
+			delay(470);
+			for(int i = (DUMP_UP - DUMP_DOWN) * 3 / 4 + DUMP_DOWN; i < DUMP_UP; i++){
+				theRobot.writeToServo(theRobot.DUMP, i);
+				delay(30);
+			}
+			delay(500);
+			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN * 3 / 4);
+			delay(500);
+			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP - DUMP_DOWN) * 5 / 8 + DUMP_DOWN);
+			delay(500);
+			for(int i = (DUMP_UP - DUMP_DOWN) * 3 / 4 + DUMP_DOWN; i < DUMP_UP; i++){
+				theRobot.writeToServo(theRobot.DUMP, i);
+				delay(30);
+			}
+			theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 2);
+			delay(500);
+      while(true) {
+        theRobot.writeToServo(theRobot.DUMP, 5 * (DUMP_UP + DUMP_DOWN) / 8);
+        delay(500);
+        theRobot.writeToServo(theRobot.DUMP, 3 * (DUMP_UP + DUMP_DOWN) / 4);
+        delay(500);
+        theRobot.writeToServo(theRobot.DUMP, 7 * (DUMP_UP + DUMP_DOWN) / 8);
+        delay(500);
+        theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
+        delay(1000);
+        theRobot.writeToServo(theRobot.DUMP, (DUMP_UP + DUMP_DOWN) / 4);
+        delay(1000);
+        theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
+        delay(1000);
+      }
 			
+			theRobot.currentState = 0;
 			break;
 	}
 }	//end stateMachine::commonStates
@@ -372,12 +402,7 @@ void  stateMachine::execute(Robot& theRobot) {
         digitalWrite(MC_BIN1, HIGH);
         digitalWrite(MC_BIN2, LOW);
 
-		if(theRobot.currentState == 17){
-			lineFollow(theRobot, 0, 90);
-		}else{
-			lineFollow(theRobot, 0);
-		}
-		
+		lineFollow(theRobot, 0);
         break;
 
 	case WAIT:
@@ -414,16 +439,9 @@ void  stateMachine::execute(Robot& theRobot) {
         break;
 
     case ROUND_A_BOUT:
-		if(theRobot.currentState == 16){
-			theRobot.writeToServo(theRobot.ARM, ARM_UP);
-		}
 		digitalWrite(MC_AIN1, HIGH);
 		digitalWrite(MC_AIN2, LOW);
-		if(theRobot.currentState == 15){
-			writeToWheels(FULL_SPEED * 0.35, FULL_SPEED * 0.35);
-		}else{
-			writeToWheels(FULL_SPEED * 0.5, FULL_SPEED * 0.5);
-		}
+		writeToWheels(FULL_SPEED * 0.5, FULL_SPEED * 0.5);
 		ejectCornerBarrel(theRobot);
         break;
 
@@ -466,37 +484,8 @@ void  stateMachine::execute(Robot& theRobot) {
         break;
 
     case DUMP_BARRELS:
-		writeToWheels(0, 0);
-		theRobot.writeToServo(theRobot.ARM, ARM_MID);
-		if(theRobot.dumpPosition == 700 && theRobot.dumpTimer < millis()){
-			theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
-			delay(500);
-			theRobot.currentState = 0;
-		}
-	
-	    //just starting to dump
-        if(theRobot.dumpTimer == 0){
-			theRobot.writeToServo(theRobot.DUMP, 6.0/8.0*(float)(DUMP_UP-DUMP_DOWN)+DUMP_DOWN);
-			theRobot.dumpPosition = 6.0/8.0*(float)(DUMP_UP-DUMP_DOWN)+DUMP_DOWN;
-			theRobot.dumpTimer = millis() + 400;
-		}
-		//already dumped all the way
-		if(theRobot.dumpPosition == DUMP_UP && theRobot.dumpTimer < millis()){
-			theRobot.writeToServo(theRobot.DUMP, DUMP_DOWN);
-			theRobot.dumpTimer = millis() + 700;
-			theRobot.dumpPosition = 700;
-			
-		//need to dump a little more
-		}else if(theRobot.dumpTimer < millis()){
-			theRobot.dumpPosition += 1;
-			theRobot.dumpTimer = millis()+ 40;
-			theRobot.writeToServo(theRobot.DUMP, theRobot.dumpPosition);
-			
-			//wait for barrels to roll out
-			if(theRobot.dumpPosition == DUMP_UP){
-				theRobot.dumpTimer = millis() + 700;
-			}
-		}
+        theRobot.writeToServo(theRobot.DUMP, DUMP_UP);
+        writeToWheels(0, 0);
         break;
 
     case WALL_FOLLOW_RIGHT:
@@ -540,7 +529,7 @@ void stateMachine::ejectBarrel(Robot& theRobot) {
 void stateMachine::ejectCornerBarrel(Robot& theRobot) {
 
 	if (!theRobot.ejectTimer.isTimerSet()) {
-		theRobot.ejectTimer.set(400); // SG 6/14 changed from 200
+		theRobot.ejectTimer.set(500); // SG 6/14 changed from 200
 	}
 	if (theRobot.ejectTimer.isTimeUpUnset()) {
 		theRobot.writeToServo(theRobot.EJECT, EJECT_FRONT_POSITION);
@@ -636,10 +625,7 @@ void stateMachine::resetRobot(Robot& theRobot){
   theRobot.oneTimer.unset();
   theRobot.errorTimer.unset();
   theRobot.turnTimer.unset();
-  
-  theRobot.dumpTimer = 0;
-  theRobot.dumpPosition = DUMP_DOWN;
-	
+
   writeToWheels(0,0);
   digitalWrite(MC_AIN1, LOW);
   digitalWrite(MC_AIN2, HIGH);
@@ -733,8 +719,11 @@ void stateMachine::wallFollow(Robot& theRobot, int center){
         ratio = 0.0;
     }
 
-    writeToWheels(FULL_SPEED, FULL_SPEED*(ratio));
-
+    #ifdef R2_LEFT
+      writeToWheels(FULL_SPEED, FULL_SPEED*(ratio));
+    #else
+      writeToWheels(FULL_SPEED * ratio, FULL_SPEED);
+    #endif
   }
   else{ //turn left
     ratio = (theRobot.leftSensorDistance - center)/LEFT_WF_CLOSE_GAIN;
@@ -742,9 +731,12 @@ void stateMachine::wallFollow(Robot& theRobot, int center){
     if(ratio < 0.0){
       ratio = 0.0;
     }
-	
-    writeToWheels(FULL_SPEED * ratio, FULL_SPEED);
 
+    #ifdef R2_LEFT
+      writeToWheels(FULL_SPEED * ratio, FULL_SPEED);
+    #else
+      writeToWheels(FULL_SPEED, FULL_SPEED*(ratio));
+    #endif
   }
 }
 
@@ -761,7 +753,11 @@ void stateMachine::accelerate(int zero, int sixty, int time){
 
   for(int i = 0; i < time/ACCELERATE_STEP_SIZE; i++){
     currentSpeed = map(i, 0, time/ACCELERATE_STEP_SIZE, zero, sixty);
-    writeToWheels(0, currentSpeed);
+		#ifdef R2_LEFT
+    	writeToWheels(0, currentSpeed);
+		#else
+			writeToWheels(currentSpeed, 0);
+		#endif
     delay(ACCELERATE_STEP_SIZE);
   }
 }
